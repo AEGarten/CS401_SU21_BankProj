@@ -62,19 +62,12 @@ public class Money {
 	public Money mult(double d) {
 		Money prod = new Money();
 		prod.fraction = this.fraction * d;
-//System.out.println(prod.cents);
 		prod.cents = (int) (this.cents * d);	
-//System.out.println(prod.cents);
 		prod.fraction += this.cents*d - prod.cents; 
-//System.out.println(prod.fraction);
 		prod.dollars = (int) (this.dollars * d);
-//System.out.println(prod.dollars);
 		prod.fraction += (this.dollars*d - prod.dollars) * 100;	
-//System.out.println(prod.fraction);
-		
 		
 		resolve(prod);
-//System.out.println(prod.fraction);
 		return prod;
 	}
 	
@@ -106,7 +99,7 @@ public class Money {
 	}
 	
 	//resolves overages where cents holds whole dollars(s)
-	public void resolve(Money m) {
+	private void resolve(Money m) {
 		m.cents += (int) m.fraction;
 		m.dollars += m.cents / 100;
 		m.cents = m.cents % 100;
