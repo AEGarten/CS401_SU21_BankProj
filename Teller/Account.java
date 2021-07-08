@@ -2,23 +2,35 @@
 
 public class Account {
 	
-	public final int id;
-	public final AccountType type;
-	private boolean postiveStatus = false;
+	private final int id;
+	private final AccountType type;
+	private boolean positiveStatus = false;
 	private Money balance;
 	private LastTransaction lastTransaction;
 	
 	//TODO: When classes become available
-//	private LinkedList<> pendings = new LinkedList<Pending>();	
-//	private LinkedList<> fees = new LinkedList<Fee>();	
+//	private ArrayList<Pending> pendings = new ArrayList<>();	
+//	private ArrayList<Fee> fees = new ArrayList<>();	
 	
 	public Account(int id, AccountType at) {
 		this.id = id;
 		this.type = at;
 	}
+	
+	//full constructor for loading from file; collections can be set separately 
+	public Account(
+			int id, AccountType accountType,
+			boolean positiveStatus, Money balance,
+			LastTransaction lastTransaction) {
+		
+		this(id, accountType);
+		this.positiveStatus = positiveStatus;
+		this.balance = balance;
+		this.lastTransaction = lastTransaction;
+	}
 
-	public boolean isPositiveStatus() { return this.postiveStatus; }
-	public void setPositiveStatus(boolean ps) { this.postiveStatus = ps; }
+	public boolean isPositiveStatus() { return this.positiveStatus; }
+	public void setPositiveStatus(boolean ps) { this.positiveStatus = ps; }
 	
 	public LastTransaction getLastTransaction() { return this.lastTransaction; }
 	public void setPositiveStatus(LastTransaction lt) { this.lastTransaction = lt; }
@@ -27,26 +39,27 @@ public class Account {
 	public void setBalance(Money b) { this.balance = b; }
 	
 	//TODO: When classes become available
-//	public LinkedList<Pending> getPendings(){ return this.pendings; }
-//	public void setPendings(LinkedList<Pending> p){ this.pendings = p; }
+//	public ArrayList<Pending> getPendings(){ return this.pendings; }
+//	public void setPendings(ArrayList<Pending> p){ this.pendings = p; }
 	
-//	public LinkedList<Fee> getFees(){ return this.fees; }
-//	public void setFees(LinkedList<Fee> f){ this.fees = f; }
+//	public ArrayList<Fee> getFees(){ return this.fees; }
+//	public void setFees(ArrayList<Fee> f){ this.fees = f; }
+	
+	public int getID() { return this.id; }
+	
+	public AccountType getType() { return this.type; }
 
-//	public void addPending(Pending p) { this.pendings.addFirst(p); }
+//	public void addPending(Pending p) { this.pendings.add(p); }
 	
-//	public Pending popPending() {
-//		Pending last = this.pendings.getLast();
-//		this.pendings.removeLast();
-//		return last; 
-//	}
+	//TODO: public Pending findPending(Date d)
 	
-//	public void addFee(Pending f) { this.fees.addFirst(f); }
+	//TODO: public boolean removePending(Date d)
 	
-//	public Pending popFee() {
-//	Fee last = this.fees.getLast();
-//	this.fees.removeLast();
-//	return last; 
-//	}
+//	public void addFee(Fee f) { this.fees.add(f); }
+	
+	//TODO: public Fee findFee(Date d)
+	
+	//TODO: public boolean removeFee(Date d)
+	
 	
 }
