@@ -20,10 +20,10 @@ public class Money {
 	
 	//setters & getters: dollars, cents
 	public int getDollars() { return this.dollars; }
-	public int setDollars() { return this.dollars; }
+	public void setDollars(int d) { this.dollars = d; }
 	
 	public int getCents() { return this.cents; }
-	public int setCents() { return this.cents; }
+	public void setCents(int c) { this.cents = c; }
 	
 	public double getFraction() { return this.fraction; }
 	
@@ -51,14 +51,15 @@ public class Money {
 	 * Do it in pieces and try to keep numbers out of the left side of the decimal
 	 * The more digits to the left of the decimal, the less on the right and the more inaccurate the double
 	 * Converting to cents puts more digits to the left of the decimal
-	 * 23.196 * 0.1 = 2.3196
+	 * Example
+	 * 23.196 * 0.1 = 2.3196  //full calculation
+	 * 
+	 * pieces
 	 * 23 * 0.1 = 2.3
 	 * 0.19 * 0.1 = 0.019
 	 * 0.006 * 0.1 = 0.0006
-	 * 2.3 + 0.019 + 0.0006 = 2.3196
+	 * 2.3 + 0.019 + 0.0006 = 2.3196 //same result
 	 */
-	
-	
 	public Money mult(double d) {
 		Money prod = new Money();
 		prod.fraction = this.fraction * d;
@@ -71,14 +72,17 @@ public class Money {
 		return prod;
 	}
 	
-//	public Money div(double d) {
-//		Money quot = new Money();
-//		quot.cents = (int) (this.cents / d);
-//		quot.dollars = (int) (this.dollars / d);
-//		
-//		resolve(quot);
-//		return quot;
-//	}
+	public Money div(double d) {
+		Money quot = new Money();
+		quot.fraction = this.fraction / d;
+		quot.cents = (int) (this.cents / d);	
+		quot.fraction += this.cents/d - quot.cents; 
+		quot.dollars = (int) (this.dollars / d);
+		quot.fraction += (this.dollars/d - quot.dollars) * 100;	
+		
+		resolve(quot);
+		return quot;
+	}
 	
 	//comparison
 	public boolean equals(Money m) {
@@ -106,7 +110,7 @@ public class Money {
 		m.fraction -= (int) m.fraction;
 	}
 	
-	//To be accurate to within one 0.001 cents, only need to round when > 0.009
+	//To be accurate to within one 0.001 cent, only need to round when > 0.009
 	public Money round() {
 		Money rounded = new Money(this.dollars, this.cents + 1);
 		if (this.fraction > 0.9) return rounded;
