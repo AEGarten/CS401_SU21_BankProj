@@ -12,7 +12,7 @@ public class ATM {
 	private Money localcash;
 	private ATMUser user;
 	private Socket socketconnection;
-	private Integer sessionID;
+	private int sessionID;
 	private Message message;
 	Scanner sc = new Scanner(System.in);
 	
@@ -78,6 +78,7 @@ public class ATM {
 	}
 	
 	public void withdrawal() throws IOException {
+		
 		message.perform = Process.WITHDRAWAL;
 		OutputStream outputStream = socketconnection.getOutputStream();
         ObjectOutputStream objectOutputStream = new ObjectOutputStream(outputStream);
