@@ -1,16 +1,18 @@
 
 //Goes inside Message. Has children of different types, so can change what is held without changing Message class
 public class Packet {
-	public int id;	//for what Customer/Employee/Account/Card ID to be engaged
+	public int actOnID;	//for what Customer/Employee/Account/Card ID to perform operation
 	public Money amount;
-	public String target; //for transfers, closing accounts
+	public int addendumID; 	//for transfers, closing accounts (not customers)
+	public int checkNumber;	//for check deposits
 
 	public Packet() {};
 	
-	public Packet(int id, Money amount, String target) {
-		this.id = id;
+	public Packet(int id, Money amount, int plusID, int checkNum) {
+		this.actOnID = id;
 		this.amount = amount;
-		this.target = target;
+		this.addendumID = plusID;
+		this.checkNumber = checkNum;
 	}
 
 }

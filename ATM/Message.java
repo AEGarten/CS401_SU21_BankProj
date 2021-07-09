@@ -10,9 +10,10 @@ public class Message implements Serializable {
 		/*
 		 * Packet			//children: ATMPacket, AccountPacket, CustomerPacket, EmployeePacket
 		 * --------
-		 * +id: int			//for what Customer/Employee/Account/Card ID to be engaged
-		 * +amount: Money	//for holding amount of change: Transfer/Deposit/Withdrawal
-		 * +target: String	//for transfers, where to?; closing accounts, which account?
+		 * +actOnID: int		//for what Customer/Employee/Account/Card ID to be 
+		 * +amount: Money		//for holding amount of change: Transfer/Deposit/Withdrawal
+		 * +target: String		//for transfers, where to?; closing accounts, which account?
+		 * +addendumID: int 	//for transfers, closing accounts (not customers)
 		 */
 	
 	public String authentication; //for ATM: PIN; Teller:Employee login, password; Teller:Employee+Customer login, passcode
