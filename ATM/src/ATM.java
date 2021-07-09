@@ -44,8 +44,12 @@ public class ATM {
 		
 		socketconnection = new Socket("localhost", 1234);
 		
-		message.authentication = ATMpin;
-		message.packet.id = Integer.parseInt(ATMID);
+		//message.authentication = ATMpin;
+		message.authentication = "1234";
+		message.packet.id = 567890;
+		//message.packet.id = Integer.parseInt(ATMID);
+		message.perform = Process.LOGIN;
+		message.packet = new ATMPacket();
 		
 		//Server.loginvalidation(Message);
 		
@@ -71,6 +75,12 @@ public class ATM {
 	}
 	
 	public void deposit() throws IOException {
+		System.out.println("Cash or check");
+		String deposittender = sc.nextLine();
+		System.out.println("Enter Deposit Amount");
+		String depositamount = sc.nextLine();
+		
+		
 		message.perform = Process.DEPOSIT;
 		OutputStream outputStream = socketconnection.getOutputStream();
         ObjectOutputStream objectOutputStream = new ObjectOutputStream(outputStream);
