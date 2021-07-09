@@ -3,7 +3,17 @@ import java.util.Date;
 public class Message {
 	
 	public Process perform;
-	public Packet packet;
+	
+	//Goes inside Message. Usually preferable to use one of its children instead, depending on what info needs to be sent
+	public Packet packet; 
+	/*
+	 * Packet			//children: ATMPacket, AccountPacket, CustomerPacket, EmployeePacket
+	 * --------
+	 * +id: int			//for what Customer/Employee/Account/Card ID to be engaged
+	 * +amount: Money	//for holding amount of change: Transfer/Deposit/Withdrawal
+	 * +target: String	//for transfers, where to?; closing accounts, which account?
+	 */
+	
 	public String authentication; //for ATM: PIN; Teller:Employee login, password; Teller:Employee+Customer login, passcode
 	public final boolean success;
 	public final int id;
