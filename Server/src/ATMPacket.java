@@ -12,5 +12,21 @@ public class ATMPacket extends Packet{
 	public int savingsID;
 	public boolean checkingPositive;
 	public boolean savingsPositive;
-	public int checkNumber; //for deposits
+	public int checkNumber; //for check deposits
+	
+	//for ATM login
+	public ATMPacket() {}
+	
+	//for server use
+	public ATMPacket(int checkID, int savID, boolean checkPos, boolean savPos) {
+		this.checkingID = checkID;
+		this.savingsID = savID;
+		this.checkingPositive = checkPos;
+		this.savingsPositive = savPos;
+	}
+	
+	//for ATM check deposit 
+	public ATMPacket(int checkNum) {
+		this.checkNumber = checkNum;
+	}
 }
