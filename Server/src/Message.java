@@ -26,12 +26,21 @@ public class Message implements Serializable {
 		this.success = false;
 	}
 	
+	//after login sessID is available to clients
+	public Message(int sessID) {
+		this.sessionID = sessID;
+		this.id = (int) (new Date().getTime() - 1625500000000L); //get long to int
+		this.success = false;
+	}
+	
+	//for server use
 	public Message(int sessID, int id) {
 		this.sessionID = sessID;
 		this.id = id;
 		this.success = false;
 	}
 	
+	//for server use
 	public Message(int sessID, int id, boolean success) {
 		this.sessionID = sessID;
 		this.id = id;
