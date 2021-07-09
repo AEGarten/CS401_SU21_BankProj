@@ -23,6 +23,7 @@ enum Process {
 	SAVE,
 	LOAD,
 	LOGIN,
+	LOGOUT,
 	ACCESS,	//when an employee wants Access to a customer
 	GET_ID	//Most ids come from the server. This indicates an id request.
 }
