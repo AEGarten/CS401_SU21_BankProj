@@ -10,6 +10,8 @@ public class Account {
 	private LastTransaction lastTransaction;
 	private Date opened = new Date();
 	private Date closed;
+	private boolean attachedCard = false;  //is there an ATM assoc w this account
+	private int cardID;						//if so what is the card id
 	
 	//TODO: When classes become available
 //	private ArrayList<Pending> pendings = new ArrayList<>();	
@@ -25,7 +27,8 @@ public class Account {
 			int id, AccountType accountType,
 			boolean positiveStatus, Money balance,
 			LastTransaction lastTransaction, Date opened,
-			Date closed) {
+			Date closed, boolean attCard,
+			int cardID) {
 		
 		this(id, accountType);
 		this.positiveStatus = positiveStatus;
@@ -33,6 +36,8 @@ public class Account {
 		this.lastTransaction = lastTransaction;
 		this.opened = opened;
 		this.closed = closed;
+		this.attachedCard = attCard;
+		this.cardID = cardID;
 	}
 
 	public boolean isPositiveStatus() { return this.positiveStatus; }
@@ -49,6 +54,12 @@ public class Account {
 	
 	public Date getClosed() { return this.closed; }
 	public void setClosed(Date d) { this.closed = d; }
+	
+	public boolean hasAttachedCard() { return this.attachedCard; }
+	public void setAttachedCard(boolean ac) { this.attachedCard = ac; }
+	
+	public int getCardID() { return this.cardID; }
+	public void setCardID(int cid) { this.cardID = cid; }
 	
 	//TODO: When classes become available
 //	public ArrayList<Pending> getPendings(){ return this.pendings; }
