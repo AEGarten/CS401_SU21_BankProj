@@ -11,7 +11,4 @@ public class Pending {
 		this.checkNumber = checkNumber;
 	}
 	
-	public int getID() {
-		return id;
-	}
 }
