@@ -35,7 +35,7 @@ public class UniqueIDs {
 		return newID;
 	}
 	
-	public synchronized void removeID(String id) {
+	public synchronized void removeID(int id) {
 		idSet.remove(id);
 	}
 	
