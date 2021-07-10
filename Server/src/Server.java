@@ -21,10 +21,8 @@ public class Server {
 	}
 	
 	public static int getSessionID() {
-		int newID = (int) (new Date().getTime() - 1625500000000L);
-		newID /= 1 + rand.nextInt(10);
-		
-		return newID;
+		Server.idCount += 1 + rand.nextInt(100);
+		return Server.idCount;
 	}
 
 	private static class ConnectionListener implements Runnable {
