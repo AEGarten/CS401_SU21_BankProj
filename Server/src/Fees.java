@@ -1,28 +1,19 @@
 import java.util.Date;
-public class Fees extends Pending{
-	private final int id = 0;
-	Money money;
+
+public class Fees {
+	Money amount;
+	Date date;
+	String type;
+
 	public Fees() {
-		money = new Money();
+		amount = new Money();
+		date = new Date();
+		type = "";
 	}
-	public Date date() {
-		return date;
-	}
-	
-	public String amount() {
-		return money.toString();
-		
-	}
-	
-	public void pending(Date date, Money money) {
-		// Need Pending
-	}
-	
-	public void pending(int id, Date date, Money money) {
-		// Need pending
-	}
-	
-	public int getID() {
-		return id;
+
+	public Fees(Date date, Money amount, String type) {
+		this.date = date;
+		this.amount = amount;
+		this.type = type;
 	}
 }
