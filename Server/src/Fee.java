@@ -1,17 +1,17 @@
 import java.util.Date;
 
-public class Fees {
+public class Fee {
 	Money amount;
 	Date date;
 	String type;
 
-	public Fees() {
+	public Fee() {
 		amount = new Money();
 		date = new Date();
 		type = "";
 	}
 
-	public Fees(Date date, Money amount, String type) {
+	public Fee(Date date, Money amount, String type) {
 		this.date = date;
 		this.amount = amount;
 		this.type = type;
