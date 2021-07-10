@@ -60,7 +60,16 @@ public class ATM {
 	}
 	
 	public void transferFunds() throws IOException {
+		System.out.println("Which account would you be transferring to?: ");
+		String transfertarget = sc.nextLine();
+		System.out.println("Enter Transfer Amount");
+		String transferamount = sc.nextLine();
+		
+		message.packet.target = transfertarget;
+		message.packet.amount.setDollars(Integer.parseInt(transferamount));
+		message.packet.amount.setCents(0);
 		message.perform = Process.TRANSFER;
+		
 		OutputStream outputStream = socketconnection.getOutputStream();
         ObjectOutputStream objectOutputStream = new ObjectOutputStream(outputStream);
         objectOutputStream.writeObject(message);
@@ -68,28 +77,47 @@ public class ATM {
 	}
 	
 	public void viewBalance() throws IOException {
+		message.packet.id = user.getCheckingID();
 		message.perform = Process.BALANCE;
+		
 		OutputStream outputStream = socketconnection.getOutputStream();
         ObjectOutputStream objectOutputStream = new ObjectOutputStream(outputStream);
         objectOutputStream.writeObject(message);
 	}
 	
 	public void deposit() throws IOException {
-		System.out.println("Cash or check");
+		System.out.println("Cash or Check");
 		String deposittender = sc.nextLine();
 		System.out.println("Enter Deposit Amount");
 		String depositamount = sc.nextLine();
 		
-		
+		if(deposittender.equalsIgnoreCase("Check")){
+			ATMPacket atmpacket = new ATMPacket();
+			message.packet = atmpacket;
+			atmpacket.checkNumber = 123456789;
+		}
+		else if(deposittender.equalsIgnoreCase("Cash")) {
+			ATMPacket atmpacket = new ATMPacket();
+			message.packet = atmpacket;
+			atmpacket.checkNumber = 0;
+		}
+		message.packet.amount.setDollars(Integer.parseInt(depositamount));
+		message.packet.amount.setCents(0);
 		message.perform = Process.DEPOSIT;
+		
 		OutputStream outputStream = socketconnection.getOutputStream();
         ObjectOutputStream objectOutputStream = new ObjectOutputStream(outputStream);
         objectOutputStream.writeObject(message);
 	}
 	
 	public void withdrawal() throws IOException {
+		System.out.println("Enter Withdrawal Amount");
+		String withdrawalamount = sc.nextLine();
 		
+		message.packet.amount.setDollars(Integer.parseInt(withdrawalamount));
+		message.packet.amount.setCents(0);
 		message.perform = Process.WITHDRAWAL;
+		
 		OutputStream outputStream = socketconnection.getOutputStream();
         ObjectOutputStream objectOutputStream = new ObjectOutputStream(outputStream);
         objectOutputStream.writeObject(message);	
@@ -98,12 +126,10 @@ public class ATM {
 	public void listenToMessage(Socket socketconnection) throws IOException, ClassNotFoundException {
 		ObjectInputStream inputStream = new ObjectInputStream(socketconnection.getInputStream());
 		Message message = (Message) inputStream.readObject();
-		printMessage(message);
 	}
 	
-	public String printMessage(Message message) {
-		String showmessage = null;
-		return showmessage;
+	public void dispenseCash(Money money) {
+		// I know it needs to be here but I dont really know how it will be implemented
 	}
 
 }
