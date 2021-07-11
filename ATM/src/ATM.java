@@ -60,6 +60,8 @@ public class ATM {
 	}
 	
 	public void transferFunds() throws IOException {
+		System.out.println("From Checking or Savings: ");
+		String transfersource = sc.nextLine();
 		System.out.println("Which account would you be transferring to?: ");
 		String transfertarget = sc.nextLine();
 		System.out.println("Enter Transfer Amount");
@@ -68,6 +70,16 @@ public class ATM {
 		message.packet.target = transfertarget;
 		message.packet.amount.setDollars(Integer.parseInt(transferamount));
 		message.packet.amount.setCents(0);
+		if(transfersource.equalsIgnoreCase("Checking")) {
+			message.packet.id = user.getCheckingID();
+		}
+		else if(transfersource.equalsIgnoreCase("Savings")) {
+			message.packet.id = user.getSavingsID();
+		}
+		else {
+			transferFunds();
+		}
+		
 		message.perform = Process.TRANSFER;
 		
 		OutputStream outputStream = socketconnection.getOutputStream();
