@@ -10,9 +10,11 @@ public class Account {
 	private LastTransaction lastTransaction;
 	private Date opened = new Date();
 	private Date closed;
+	private boolean attachedCard = false;  //is there an ATM assoc w this account
+	private int cardID;						//if so what is the card id
 	
 	//TODO: When classes become available
-//	private ArrayList<Pending> pendings = new ArrayList<>();	
+	private ArrayList<Pending> pendings = new ArrayList<>();	
 	private ArrayList<Fee> fees = new ArrayList<>();	
 	
 	public Account(int id, AccountType at) {
@@ -25,7 +27,8 @@ public class Account {
 			int id, AccountType accountType,
 			boolean positiveStatus, Money balance,
 			LastTransaction lastTransaction, Date opened,
-			Date closed) {
+			Date closed, boolean attCard,
+			int cardID) {
 		
 		this(id, accountType);
 		this.positiveStatus = positiveStatus;
@@ -33,6 +36,8 @@ public class Account {
 		this.lastTransaction = lastTransaction;
 		this.opened = opened;
 		this.closed = closed;
+		this.attachedCard = attCard;
+		this.cardID = cardID;
 	}
 
 	public boolean isPositiveStatus() { return this.positiveStatus; }
@@ -50,9 +55,14 @@ public class Account {
 	public Date getClosed() { return this.closed; }
 	public void setClosed(Date d) { this.closed = d; }
 	
-	//TODO: When classes become available
-//	public ArrayList<Pending> getPendings(){ return this.pendings; }
-//	public void setPendings(ArrayList<Pending> p){ this.pendings = p; }
+	public boolean hasAttachedCard() { return this.attachedCard; }
+	public void setAttachedCard(boolean ac) { this.attachedCard = ac; }
+	
+	public int getCardID() { return this.cardID; }
+	public void setCardID(int cid) { this.cardID = cid; }
+	
+	public ArrayList<Pending> getPendings(){ return this.pendings; }
+	public void setPendings(ArrayList<Pending> p){ this.pendings = p; }
 	
 	public ArrayList<Fee> getFees(){ return this.fees; }
 	public void setFees(ArrayList<Fee> f){ this.fees = f; }
@@ -61,16 +71,27 @@ public class Account {
 	
 	public AccountType getType() { return this.type; }
 
-//	public void addPending(Pending p) { this.pendings.add(p); }
+	public boolean addPending(Pending p) { 
+		return this.pendings.add(p); 
+	}
 	
-	//TODO: public Pending findPending(Date d)
+	public boolean addFee(Fee f) { 
+		return this.fees.add(f); 
+	}
 	
-	//TODO: public boolean removePending(Date d)
+	public Pending findPending(Date d) {
+		for (Pending p: pendings)
+			if (p.date.compareTo(d) == 0) return p;
+		
+		return null;
+	}
 	
-	public void addFee(Fee f) { this.fees.add(f); }
+	public boolean removePending(Pending p) {
+		return pendings.remove(p);
+	}
 	
 	public Fee findFee(Date d) {
-		for (Fee f: this.fees) 
+		for (Fee f: fees) 
 			if (f.date.compareTo(d) == 0) return f;
 		
 		return null;
