@@ -3,7 +3,7 @@
 public class Employee {
 
 	private String name;
-	private String loginID;
+	private final String loginID;
 	private String loginpwd;
 	
 	
@@ -21,18 +21,12 @@ public class Employee {
 	}
 
 	public String getName() {return name;}
-
 	public void setName(String name) {this.name = name;}
 
-	public String getLoginID() {return loginID;}
-
-	public void setLoginID(String loginID) {this.loginID = loginID;}
-
 	public String getLoginpwd() {return loginpwd;}
-
 	public void setLoginpwd(String loginpwd) {this.loginpwd = loginpwd;}
 	
-	
+	public String getLoginID() {return loginID;}
 	
 	
 }

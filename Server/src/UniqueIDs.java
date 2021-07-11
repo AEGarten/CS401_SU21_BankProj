@@ -8,12 +8,12 @@ import java.util.Set;
 
 public class UniqueIDs {
 	
-	private Set<Integer> idSet = new HashSet<>();
+	private HashSet<Integer> idSet = new HashSet<>();
 	private int count = 0;	//helps to generate new ID values
 	
 	//ensure id does not already exist
 	public synchronized boolean addID(int id) {
-		this.count += 1;
+		count += 1;
 		
 		if (!idSet.contains(id)) idSet.add(id);
 		else return false;
@@ -21,15 +21,15 @@ public class UniqueIDs {
 	}
 	
 	public synchronized int findNewID() {
-		int newID = this.count + 1;
+		int newID = ++count;
 		
 		while (true) {
 			if (!idSet.contains(newID)) break;
-			this.count += 1;
+			count += 1;
 			if (!idSet.contains(++newID)) break;
-			this.count += 1;
+			count += 1;
 			if (!idSet.contains(++newID)) break;
-			this.count += 1;
+			count += 1;
 			newID = newID*newID/2;
 		}
 		return newID;

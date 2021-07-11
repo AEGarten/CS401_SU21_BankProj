@@ -1,104 +1,127 @@
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReadWriteLock;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 
 public class DataBase {
 	
 	private UniqueIDs customerIDs = new UniqueIDs();
 	private UniqueIDs accountIDs = new UniqueIDs();
 //	private UniqueIDs employeeIDs = new UniqueIDs();
+//	private Set<String> employeeLogins = Collections.synchronizedSet(new HashSet<>());
 	
 	private ArrayList<Customer> customers = new ArrayList<>();
-//	private ArrayList<Empoyee> employees = new ArrayList<>();
+//	private ArrayList<Employee> employees = new ArrayList<>();
 	
-	//maps Customers to their cards, more efficient than searching each Customer then each Acct
-	private int [][] cardToCustomerTable;
+	//maps cards to their Customers, more efficient than searching each Customer then each Acct
+	private HashMap<Integer, Integer> cardToCustomerTable = new HashMap<>();
 	
-	//locking for concurrency; excludes writers from readers (who can work together)
-	private final ReadWriteLock rwLock = new ReentrantReadWriteLock();
-	private final Lock readLock = rwLock.readLock();
-	private final Lock writeLock = rwLock.writeLock();
-	
-	
-	//reserve (not get) because it mutates id list
-	public int reserveNewCustomerID() {
-		int id = customerIDs.findNewID();
-		customerIDs.addID(id);
-		return id;
+	public int getNewCustomerID() {
+		return customerIDs.findNewID();
 	}
 	
+	//reserve (not get) because it mutates id list for Account
+	//Customer has its id added when adding to the collection, account doesn't
 	public int reserveNewAccountID() {
 		int id = accountIDs.findNewID();
 		accountIDs.addID(id);
 		return id;
 	}
 	
-	public Customer findCustomer(int custID) {
+//	public int reserveNewEmployeeID() {
+//		int id = employeeIDs.findNewID();
+//		employeeIDs.addID(id);
+//		return id;
+//	}
+	
+	public synchronized Customer findCustomer(int custID) {
 		int foundIndex;
-		
-		readLock.lock();
-		try {
-			foundIndex = Collections.binarySearch(customers, custID, 
-					(a, b) -> ((Customer) a).getID() - ((Customer) b).getID());
+		Customer key = new Customer(custID, null);
 			
-			return (foundIndex > 0) ? customers.get(foundIndex) : null;
-		}
-		finally { readLock.unlock(); }
+		foundIndex = Collections.binarySearch(customers, key, 
+			(a, b) -> a.getID() - b.getID());		
+		return (foundIndex > -1) ? customers.get(foundIndex) : null;
 	}
 	
-	public boolean setCustomer(Customer c) {
+	public synchronized boolean setCustomer(Customer c) {
 		int toReplace;
 		
-		//if need read for write to get index, then whole thing needs lock, no pieces
-		readLock.lock();
+		toReplace = Collections.binarySearch(customers, c, 
+				(a, b) -> a.getID() - b.getID());
 		
-		//find it
-		try {
-			toReplace = Collections.binarySearch(customers, c.getID(), 
-					(a, b) -> ((Customer) a).getID() - ((Customer) b).getID());
-			if (toReplace > 0) {
-				
-				//delete it and replace, does not affect sort order
-				writeLock.lock();
-				try { 
-					customers.remove(toReplace);
-					customers.add(toReplace, c);
-				} 
-				finally { writeLock.unlock(); }
-				
-				return true;
-			}
-		}
-		finally { readLock.unlock(); }
+		if (toReplace > -1) {
+			
+			//delete it and replace, does not affect sort order
+			customers.remove(toReplace);
+			customers.add(toReplace, c);
+			return true;				//finally executes before return
+		}	
 		return false;		
 	}
 	
-	public boolean removeCustomer(int id) {
+	public synchronized boolean removeCustomer(int id) {
 		Customer toRemove = findCustomer(id);
-		
 		if (toRemove == null) return false; //fail to find
-		
-		writeLock.lock();
-		try { customers.remove(toRemove); }
-		finally { writeLock.unlock(); }
-		
+
+		//does not affect sort order
+		customers.remove(toRemove); 		
 		customerIDs.removeID(toRemove.getID());
 		return true;
 	}
 	
-	public boolean addCustomer(Customer c) {
+	public synchronized boolean addCustomer(Customer c) {
 		boolean success = false;
-		
-		writeLock.lock();
-		try { 
-			success = customers.add(c); 
-			Collections.sort(customers, (a, b) -> a.getID() - b.getID());
-		}
-		finally { writeLock.unlock(); }
-		customerIDs.addID(c.getID());
+			 
+		success = customers.add(c) && 
+				customerIDs.addID(c.getID());
+		Collections.sort(customers, (a, b) -> a.getID() - b.getID());
 		return success;
 	}
+	
+//	public synchronized Employee findEmployee(String empID) {
+//		int foundIndex;
+//		Employee key = new Employee("", empID, "");
+//			
+//		foundIndex = Collections.binarySearch(employees, key, 
+//			(a, b) -> a.getLoginID().compareTo(b.getLoginID()));		
+//		return (foundIndex > -1) ? employees.get(foundIndex) : null;
+//	}
+	
+//	public synchronized boolean setEmployee(Employee e) {
+//		int toReplace;
+//		
+//		toReplace = Collections.binarySearch(employees, e, 
+//				(a, b) -> a.getLoginID().compareTo(b.getLoginID()));
+//		
+//		if (toReplace > -1) {
+//			
+//			//delete it and replace, does not affect sort order
+//			employees.remove(toReplace);
+//			employees.add(toReplace, e);
+//			return true;				//finally executes before return
+//		}	
+//		return false;		
+//	}
+	
+//	public synchronized boolean removeEmployee(String id) {
+//		Customer toRemove = findEmployee(id);
+//		if (toRemove == null) return false; //fail to find
+//
+//		//does not affect sort order
+//		customers.remove(toRemove); 		
+//		customerIDs.removeID(toRemove.getID());
+//		return true;
+//	}
+	
+//	public synchronized boolean addCustomer(Customer c) {
+//		boolean success = false;
+//			 
+//		success = customers.add(c) && 
+//				customerIDs.addID(c.getID());
+//		Collections.sort(customers, (a, b) -> a.getID() - b.getID());
+//		return success;
+//	}
+	
 	
 }
