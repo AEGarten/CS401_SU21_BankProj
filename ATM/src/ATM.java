@@ -25,7 +25,7 @@ public class ATM {
 		this.sessionID = 0;
 	}
 	
-	public ATM(String location, Money localcash, Message message, ATMUser user, Socket socketconnection, Integer sessionID) {
+	public ATM(String location, Money localcash, Message message, ATMUser user, Socket socketconnection, int sessionID) {
 		this.location = location;
 		this.localcash = localcash;
 		this.message = message;
