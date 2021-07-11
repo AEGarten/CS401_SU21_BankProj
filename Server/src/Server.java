@@ -14,6 +14,7 @@ public class Server {
 	private static int idCount = 0;
 	private static Random rand = new Random();
 	private static int port;
+//	private static DataBase db;
 	
 	public Server(int port) throws IOException {
 		Server.port = port;
