@@ -79,7 +79,7 @@ public class ATM {
 		String deposittender = sc.nextLine();
 		System.out.println("Enter Deposit Amount");
 		String depositamount = sc.nextLine();
-		
+		if (deposittender.equals("check") message.packet.checkNumber = 56789;
 		
 		message.perform = Process.DEPOSIT;
 		OutputStream outputStream = socketconnection.getOutputStream();
