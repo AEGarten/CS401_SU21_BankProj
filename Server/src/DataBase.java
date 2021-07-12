@@ -17,6 +17,37 @@ public class DataBase {
 	//maps cards to their Customers, more efficient than searching each Customer then each Acct
 	private HashMap<Integer, Integer> cardToCustomerTable = new HashMap<>();
 	
+	public DataBase() {
+		//TODO remove hardcoding after FileManager added
+		cardToCustomerTable.put(567890, 4543);
+		
+		accountIDs.addID(92837);
+		accountIDs.addID(52704706);
+		
+		Account check = new Account(92837, AccountType.CHECKING);
+		check.setBalance(new Money(23, 16));
+		check.setAttachedCard(true);
+		check.setCardID(567890);
+		
+		Account sav = new Account(52704706, AccountType.SAVINGS);
+		sav.setBalance(new Money(100, 01));
+		sav.setAttachedCard(true);
+		sav.setCardID(567890);
+		
+		Customer cust = new Customer(4543, "Aidan Chartreuse");
+		cust.addAccount(check);
+		cust.addAccount(sav);
+		customers.add(cust);
+	}
+	
+	public int getCustomerFromCard(int cardNum) {
+		return cardToCustomerTable.get(cardNum);
+	}
+	
+	private void addCardToCustomer(int cardNum, int customerID) {
+		cardToCustomerTable.put(cardNum, customerID);
+	}
+	
 	public int getNewCustomerID() {
 		return customerIDs.findNewID();
 	}
@@ -72,10 +103,11 @@ public class DataBase {
 	
 	public synchronized boolean addCustomer(Customer c) {
 		boolean success = false;
-			 
-		success = customers.add(c) && 
-				customerIDs.addID(c.getID());
-		Collections.sort(customers, (a, b) -> a.getID() - b.getID());
+		
+		if (customerIDs.addID(c.getID()) && customers.add(c)) {
+			success = true;
+			Collections.sort(customers, (a, b) -> a.getID() - b.getID()); //only sort if add successful
+		}
 		return success;
 	}
 	
