@@ -6,6 +6,7 @@ public class Customer {
 	private final int id;
 	private String name;
 	private String passcode;
+	private String PIN;
 	private int numSavings;
 	private int numChecking;
 	private ArrayList<Account> accounts = new ArrayList<>();
@@ -22,13 +23,14 @@ public class Customer {
 	public Customer(
 			int id, String name,
 			String passcode, int numSavings,
-			int numChecking, Date opened,
-			Date closed) {
+			int numChecking, String PIN, 
+			Date opened, Date closed) {
 		
 		this(id, name);
 		this.passcode = passcode;
 		this.numSavings = numSavings;
 		this.numChecking = numChecking;
+		this.PIN = PIN;
 		this.opened = opened;
 		this.closed = closed;
 	}
@@ -50,6 +52,9 @@ public class Customer {
 	
 	public Date getClosed() { return this.closed; }
 	public void setClosed(Date d) { this.closed = d; }
+	
+	public String getPIN() { return this.PIN; }
+	public void setPIN(String PIN) { this.PIN = PIN; }
 	
 	public int getID() { return this.id; }
 	
