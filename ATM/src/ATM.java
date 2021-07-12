@@ -106,7 +106,7 @@ public class ATM {
 		if(deposittender.equalsIgnoreCase("Check")){
 			ATMPacket atmpacket = new ATMPacket();
 			message.packet = atmpacket;
-			atmpacket.checkNumber = 123456789;
+			atmpacket.checkNumber = 56789;
 		}
 		else if(deposittender.equalsIgnoreCase("Cash")) {
 			ATMPacket atmpacket = new ATMPacket();
@@ -115,6 +115,7 @@ public class ATM {
 		}
 		message.packet.amount.setDollars(Integer.parseInt(depositamount));
 		message.packet.amount.setCents(0);
+
 		message.perform = Process.DEPOSIT;
 		
 		OutputStream outputStream = socketconnection.getOutputStream();
