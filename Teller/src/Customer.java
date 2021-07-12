@@ -51,6 +51,8 @@ public class Customer {
 	public Date getClosed() { return this.closed; }
 	public void setClosed(Date d) { this.closed = d; }
 	
+	public int getID() { return this.id; }
+	
 	public ArrayList<Account> getAccounts() { return this.accounts; }
 	public void setAccounts(ArrayList<Account> a) { this.accounts = a; }
 	
@@ -65,11 +67,11 @@ public class Customer {
 	
 	public boolean removeAccount(int id) {
 		Account target;
-		if ((target = findAccount(id)) != null) {
-			accounts.remove(target);
-			return true;
-		}
-		return false;
+		
+		if ((target = findAccount(id)) == null) return false; //fail to find
+		
+		accounts.remove(target);
+		return true;
 	}
 	
 }

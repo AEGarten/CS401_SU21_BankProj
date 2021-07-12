@@ -6,5 +6,9 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="lib" path="Employee.java"/>
+	<classpathentry kind="lib" path="Enums.java"/>
+	<classpathentry kind="lib" path="LastTransaction.java"/>
+	<classpathentry kind="lib" path="Money.java"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
