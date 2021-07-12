@@ -46,7 +46,7 @@ public class ATM {
 		
 		//message.authentication = ATMpin;
 		message.authentication = "1234";
-		message.packet.id = 567890;
+		message.packet.actOnID = 567890;
 		//message.packet.id = Integer.parseInt(ATMID);
 		message.perform = Process.LOGIN;
 		message.packet = new ATMPacket();
@@ -67,14 +67,14 @@ public class ATM {
 		System.out.println("Enter Transfer Amount");
 		String transferamount = sc.nextLine();
 		
-		message.packet.target = transfertarget;
+		message.packet.addendumID = Integer.parseInt(transfertarget);
 		message.packet.amount.setDollars(Integer.parseInt(transferamount));
 		message.packet.amount.setCents(0);
 		if(transfersource.equalsIgnoreCase("Checking")) {
-			message.packet.id = user.getCheckingID();
+			message.packet.actOnID = user.getCheckingID();
 		}
 		else if(transfersource.equalsIgnoreCase("Savings")) {
-			message.packet.id = user.getSavingsID();
+			message.packet.actOnID = user.getSavingsID();
 		}
 		else {
 			transferFunds();
@@ -89,7 +89,7 @@ public class ATM {
 	}
 	
 	public void viewBalance() throws IOException {
-		message.packet.id = user.getCheckingID();
+		message.packet.actOnID = user.getCheckingID();
 		message.perform = Process.BALANCE;
 		
 		OutputStream outputStream = socketconnection.getOutputStream();
