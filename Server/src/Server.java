@@ -90,6 +90,8 @@ public class Server {
 		
 		@Override
 		public void run() {
+			System.out.println("New client connected");
+			
 			try (
 				ObjectInputStream frClient = new ObjectInputStream(client.getInputStream());
 				ObjectOutputStream toClient = new ObjectOutputStream(client.getOutputStream());
