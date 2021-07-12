@@ -14,6 +14,7 @@ public class Employee {
 		this.employeeID = 0;
 		this.loginusername = "";
 		this.loginpwd = "";
+	this.type = EmployeeType.EMPLOYEE;
 	}
 	
 	public Employee(String name, int employeeID, String loginusername, String loginpwd) {
