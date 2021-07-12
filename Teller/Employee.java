@@ -40,7 +40,9 @@ public class Employee {
 
 	public void setLoginusername(String loginusername) {this.loginusername = loginusername;}
 	
+	public EmployeeType getType() { return this.type; }
 	
+	public void setType(EmployeeType type) { this.type = type; }
 	
 	
 }
