@@ -6,7 +6,7 @@ public class Employee {
 	private int employeeID;
 	private String loginusername;
 	private String loginpwd;
-	
+	private EmployeeType type;
 	
 	
 	public Employee() {
