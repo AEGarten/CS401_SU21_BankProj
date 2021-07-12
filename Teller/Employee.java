@@ -3,20 +3,23 @@
 public class Employee {
 
 	private String name;
-	private String loginID;
+	private int employeeID;
+	private String loginusername;
 	private String loginpwd;
 	
 	
 	
 	public Employee() {
 		this.name = "";
-		this.loginID = "";
+		this.employeeID = 0;
+		this.loginusername = "";
 		this.loginpwd = "";
 	}
 	
-	public Employee(String name, String loginID, String loginpwd) {
+	public Employee(String name, int employeeID, String loginusername, String loginpwd) {
 		this.name = name;
-		this.loginID = loginID;
+		this.employeeID = employeeID;
+		this.loginusername = loginusername;
 		this.loginpwd = loginpwd;
 	}
 
@@ -24,13 +27,17 @@ public class Employee {
 
 	public void setName(String name) {this.name = name;}
 
-	public String getLoginID() {return loginID;}
+	public int getEmployeeID() {return employeeID;}
 
-	public void setLoginID(String loginID) {this.loginID = loginID;}
+	public void setEmployeeID(int employeeID) {this.employeeID = employeeID;}
 
 	public String getLoginpwd() {return loginpwd;}
 
 	public void setLoginpwd(String loginpwd) {this.loginpwd = loginpwd;}
+
+	public String getLoginusername() {return loginusername;}
+
+	public void setLoginusername(String loginusername) {this.loginusername = loginusername;}
 	
 	
 	
