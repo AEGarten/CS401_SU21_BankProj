@@ -231,7 +231,7 @@ public class Server {
 	//						break;
 	//					case WITHDRAWAL:
 	//						break;
-						default: toClient.writeObject(msgIn); break;
+						default: toClient.writeObject(fail(msgIn)); break;
 							
 						}
 						
@@ -259,7 +259,6 @@ public class Server {
 				validated = true;
 				clientInfo = new ClientInfo(ClientType.ATM, customer.getID(), false);
 				sessionID = reserveSessionID(clientInfo);
-				
 				
 				ArrayList<Account> accts = customer.getAccounts();
 				
