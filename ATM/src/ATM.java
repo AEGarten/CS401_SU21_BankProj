@@ -14,6 +14,7 @@ public class ATM {
 	private Socket socketconnection;
 	private int sessionID;
 	private Message message;
+	private Message GUImessage;
 	Scanner sc = new Scanner(System.in);
 	
 	public ATM() {
@@ -38,7 +39,7 @@ public class ATM {
 	
 	
 	
-	public Message login(String ATMID, String ATMpin) throws UnknownHostException, IOException, ClassNotFoundException {
+	public boolean login(String ATMID, String ATMpin) throws UnknownHostException, IOException, ClassNotFoundException {
 		
 		socketconnection = new Socket("192.168.1.102", 1234);
 		
@@ -55,8 +56,9 @@ public class ATM {
         ObjectOutputStream objectOutputStream = new ObjectOutputStream(outputStream);
         objectOutputStream.writeObject(message);
         
-        Message GUImessage = listenToMessage(socketconnection);
-        return GUImessage;
+        GUImessage = listenToMessage(socketconnection);
+        sessionID = GUImessage.sessionID;
+        return GUImessage.success;
 
 	}
 	
@@ -157,8 +159,7 @@ public class ATM {
 	}
 	
 	public boolean logout() throws IOException, ClassNotFoundException {
-		message.sessionID
-		message.packet.actOnID = 567890;
+		Message logoutmessage = new Message(sessionID);
 		message.perform = Process.LOGOUT;
 		message.packet = new ATMPacket();
 		
