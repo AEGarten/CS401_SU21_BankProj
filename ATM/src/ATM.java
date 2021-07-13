@@ -38,11 +38,7 @@ public class ATM {
 	
 	
 	
-	public void login() throws UnknownHostException, IOException, ClassNotFoundException {
-		System.out.println("Enter ATM card ID");
-		String ATMID = sc.nextLine();
-		System.out.println("Enter ATM pin");
-		String ATMpin = sc.nextLine();
+	public boolean login(String ATMID, String ATMpin) throws UnknownHostException, IOException, ClassNotFoundException {
 		
 		socketconnection = new Socket("192.168.1.102", 1234);
 		
@@ -59,7 +55,8 @@ public class ATM {
         ObjectOutputStream objectOutputStream = new ObjectOutputStream(outputStream);
         objectOutputStream.writeObject(message);
         
-        listenToMessage(socketconnection);
+        Message GUImessage = listenToMessage(socketconnection);
+        return GUImessage.success;
 
 	}
 	
@@ -149,9 +146,10 @@ public class ATM {
         objectOutputStream.writeObject(message);	
 	}
 	
-	public void listenToMessage(Socket socketconnection) throws IOException, ClassNotFoundException {
+	public Message listenToMessage(Socket socketconnection) throws IOException, ClassNotFoundException {
 		ObjectInputStream inputStream = new ObjectInputStream(socketconnection.getInputStream());
 		Message message = (Message) inputStream.readObject();
+		return message;
 	}
 	
 	public void dispenseCash(Money money) {
