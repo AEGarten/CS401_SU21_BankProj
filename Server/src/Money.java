@@ -81,7 +81,7 @@ public class Money {
 				diff.cents -= 1;
 			}
 			diff.cents += m.cents - this.cents;
-			if (diff.cents < 0.0) {
+			if (diff.cents < 0) {
 				diff.cents += 100;
 				diff.dollars -= 1;
 			}
@@ -95,7 +95,7 @@ public class Money {
 				diff.cents -= 1;
 			}
 			diff.cents += this.cents - m.cents;
-			if (diff.cents < 0.0) {
+			if (diff.cents < 0) {
 				diff.cents += 100;
 				diff.dollars -= 1;
 			}
@@ -121,6 +121,10 @@ public class Money {
 	 */
 	public Money mult(double d) {
 		Money prod = new Money();
+		if (d < 0.0) {
+			this.isPositive = !this.isPositive;
+			d = Math.abs(d);
+		}
 		
 		//do the pieces
 		prod.fraction = this.fraction * d;
@@ -138,6 +142,12 @@ public class Money {
 	//mirrors mult, see mult
 	public Money div(double d) {
 		Money quot = new Money();
+		
+		if (d < 0.0) {
+			this.isPositive = !this.isPositive;
+			d = Math.abs(d);
+		}
+		
 		quot.fraction = this.fraction / d;
 		quot.cents = (int) (this.cents / d);	
 		quot.fraction += this.cents/d - quot.cents; 
