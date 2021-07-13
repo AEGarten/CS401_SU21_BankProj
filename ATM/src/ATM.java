@@ -14,6 +14,7 @@ public class ATM {
 	private Socket socketconnection;
 	private int sessionID;
 	private Message message;
+	private Message GUImessage;
 	Scanner sc = new Scanner(System.in);
 	
 	public ATM() {
@@ -55,7 +56,8 @@ public class ATM {
         ObjectOutputStream objectOutputStream = new ObjectOutputStream(outputStream);
         objectOutputStream.writeObject(message);
         
-        Message GUImessage = listenToMessage(socketconnection);
+        GUImessage = listenToMessage(socketconnection);
+        sessionID = GUImessage.sessionID;
         return GUImessage.success;
 
 	}
@@ -154,6 +156,19 @@ public class ATM {
 	
 	public void dispenseCash(Money money) {
 		// I know it needs to be here but I dont really know how it will be implemented
+	}
+	
+	public boolean logout() throws IOException, ClassNotFoundException {
+		Message logoutmessage = new Message(sessionID);
+		message.perform = Process.LOGOUT;
+		message.packet = new ATMPacket();
+		
+		OutputStream outputStream = socketconnection.getOutputStream();
+        ObjectOutputStream objectOutputStream = new ObjectOutputStream(outputStream);
+        objectOutputStream.writeObject(message);
+         
+        Message GUImessage = listenToMessage(socketconnection);
+        return GUImessage.success;
 	}
 
 }
