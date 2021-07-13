@@ -130,6 +130,15 @@ public class ATM {
 	public void withdrawal() throws IOException {
 		System.out.println("Enter Withdrawal Amount");
 		String withdrawalamount = sc.nextLine();
+		System.out.println("From Checking or Savings");
+		String withdrawalsource = sc.nextLine();
+		
+		if(withdrawalsource.equalsIgnoreCase("Checking")) {
+			message.packet.actOnID = user.getCheckingID();
+		}
+		else if(withdrawalsource.equalsIgnoreCase("Savings")) {
+			message.packet.actOnID = user.getSavingsID();
+		}
 		
 		message.packet.amount.setDollars(Integer.parseInt(withdrawalamount));
 		message.packet.amount.setCents(0);
