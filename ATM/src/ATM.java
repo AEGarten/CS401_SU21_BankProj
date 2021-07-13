@@ -34,15 +34,17 @@ public class ATM {
 		this.sessionID = sessionID;
 	}
 	
+
 	
 	
-	public void login() throws UnknownHostException, IOException {
+	
+	public void login() throws UnknownHostException, IOException, ClassNotFoundException {
 		System.out.println("Enter ATM card ID");
 		String ATMID = sc.nextLine();
 		System.out.println("Enter ATM pin");
 		String ATMpin = sc.nextLine();
 		
-		socketconnection = new Socket("localhost", 1234);
+		socketconnection = new Socket("192.168.1.102", 1234);
 		
 		//message.authentication = ATMpin;
 		message.authentication = "1234";
@@ -56,6 +58,8 @@ public class ATM {
 		OutputStream outputStream = socketconnection.getOutputStream();
         ObjectOutputStream objectOutputStream = new ObjectOutputStream(outputStream);
         objectOutputStream.writeObject(message);
+        
+        listenToMessage(socketconnection);
 
 	}
 	
