@@ -5,8 +5,8 @@ public class Pending {
 	Money amount;
 	int checkNumber;
 	
-	public Pending(Date date, Money amount, int checkNumber) {
-		this.date = date;
+	public Pending(Money amount, int checkNumber) {
+		this.date = new Date();
 		this.amount = amount;
 		this.checkNumber = checkNumber;
 	}
