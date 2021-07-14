@@ -1,4 +1,5 @@
-
+import java.util.ArrayList;
+import java.util.Date;
 
 public class Account {
 	
@@ -7,10 +8,14 @@ public class Account {
 	private boolean positiveStatus = false;
 	private Money balance;
 	private LastTransaction lastTransaction;
+	private Date opened = new Date();
+	private Date closed;
+	private boolean attachedCard = false;  //is there an ATM assoc w this account
+	private int cardID;						//if so what is the card id
 	
 	//TODO: When classes become available
-//	private ArrayList<Pending> pendings = new ArrayList<>();	
-//	private ArrayList<Fee> fees = new ArrayList<>();	
+	private ArrayList<Pending> pendings = new ArrayList<>();	
+	private ArrayList<Fee> fees = new ArrayList<>();	
 	
 	public Account(int id, AccountType at) {
 		this.id = id;
@@ -21,12 +26,18 @@ public class Account {
 	public Account(
 			int id, AccountType accountType,
 			boolean positiveStatus, Money balance,
-			LastTransaction lastTransaction) {
+			LastTransaction lastTransaction, Date opened,
+			Date closed, boolean attCard,
+			int cardID) {
 		
 		this(id, accountType);
 		this.positiveStatus = positiveStatus;
 		this.balance = balance;
 		this.lastTransaction = lastTransaction;
+		this.opened = opened;
+		this.closed = closed;
+		this.attachedCard = attCard;
+		this.cardID = cardID;
 	}
 
 	public boolean isPositiveStatus() { return this.positiveStatus; }
@@ -38,28 +49,57 @@ public class Account {
 	public Money getBalance() { return this.balance; }
 	public void setBalance(Money b) { this.balance = b; }
 	
-	//TODO: When classes become available
-//	public ArrayList<Pending> getPendings(){ return this.pendings; }
-//	public void setPendings(ArrayList<Pending> p){ this.pendings = p; }
+	public Date getOpened() { return this.opened; }
+	public void setOpened(Date d) { this.opened = d; }
 	
-//	public ArrayList<Fee> getFees(){ return this.fees; }
-//	public void setFees(ArrayList<Fee> f){ this.fees = f; }
+	public Date getClosed() { return this.closed; }
+	public void setClosed(Date d) { this.closed = d; }
+	
+	public boolean hasAttachedCard() { return this.attachedCard; }
+	public void setAttachedCard(boolean ac) { this.attachedCard = ac; }
+	
+	public int getCardID() { return this.cardID; }
+	public void setCardID(int cid) { this.cardID = cid; }
+	
+	public ArrayList<Pending> getPendings(){ return this.pendings; }
+	public void setPendings(ArrayList<Pending> p){ this.pendings = p; }
+	
+	public ArrayList<Fee> getFees(){ return this.fees; }
+	public void setFees(ArrayList<Fee> f){ this.fees = f; }
 	
 	public int getID() { return this.id; }
 	
 	public AccountType getType() { return this.type; }
 
-//	public void addPending(Pending p) { this.pendings.add(p); }
+	public boolean addPending(Pending p) { 
+		return this.pendings.add(p); 
+	}
 	
-	//TODO: public Pending findPending(Date d)
+	public boolean addFee(Fee f) { 
+		return this.fees.add(f); 
+	}
 	
-	//TODO: public boolean removePending(Date d)
+	public Pending findPending(Date d) {
+		for (Pending p: pendings)
+			if (p.date.compareTo(d) == 0) return p;
+		
+		return null;
+	}
 	
-//	public void addFee(Fee f) { this.fees.add(f); }
+	public boolean removePending(Pending p) {
+		return pendings.remove(p);
+	}
 	
-	//TODO: public Fee findFee(Date d)
+	public Fee findFee(Date d) {
+		for (Fee f: fees) 
+			if (f.date.compareTo(d) == 0) return f;
+		
+		return null;
+	}
 	
-	//TODO: public boolean removeFee(Date d)
+	public boolean removeFee(Fee f) {
+		return fees.remove(f);
+	}
 	
 	
 }
