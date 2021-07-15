@@ -70,45 +70,50 @@ public class Server {
 				
 				//if not validated, attempt login
 				if (!validated) {
-					if (msgIn.perform == Process.LOGIN) {
+					//if from ATM
+					if (msgIn instanceof ATMLogin) {
 						
-						//if from ATM
-						if (msgIn.packet instanceof ATMPacket) {
-							if (msgIn.authentication.equals("1234") && msgIn.packet.id == 567890) {
-								validated = true;
-								this.sessionID = Server.getSessionID();
-								this.type = ClientType.ATM;
-								msgOut = new Message(this.sessionID, msgIn.id, true);
-								
-								//TODO: replace with ATMPacket constructor when deployed
-								ATMPacket apkt = new ATMPacket();
-								apkt.checkingID = 92837;
-								apkt.savingsID = 52704706;
-								apkt.checkingPositive = true;
-								apkt.checkingPositive = true;
-								msgOut.packet = apkt;
-								
-								toClient.writeObject(msgOut);
-							}
+						ATMLogin msgATM = (ATMLogin) msgIn;
+						
+						if (msgATM.PIN ==1234 && msgATM.cardID == 567890) {
+							validated = true;
+							sessionID = Server.getSessionID();
+							type = ClientType.ATM;
+							
+							//TODO: replace with ATMPacket constructor when deployed
+							msgOut = new ATMLogin(92837, 52704706, true, true, sessionID, msgATM.id, true);
+							
+							
+							toClient.writeObject(msgOut);
+							
 						}
 						//if from Teller
-						else {
-							if (msgIn.authentication.equals("Login, Password")) {
-								validated = true;
-								this.sessionID = Server.getSessionID();
-								this.type = ClientType.TELLER;
-								this.supervisorAccess = false;
-								msgOut = new Message(this.sessionID, msgIn.id, true);
-								toClient.writeObject(msgOut);
-							}
+						
+					}
+					else if (msgIn instanceof TellerLogin) {
+						TellerLogin Tmsg = (TellerLogin) msgIn;
+						
+						if (Tmsg.login.equals("Login") && Tmsg.password == "Password") {
+							validated = true;
+							sessionID = Server.getSessionID();
+							type = ClientType.TELLER;
+							supervisorAccess = false;
+							
+							msgOut = new TellerLogin(sessionID, msgIn.id, validated);
+							toClient.writeObject(msgOut);
+							
+							msgIn = (Message) frClient.readObject(); 
 						}
-					}					
+					}
 				}
 				//by now should be valid, if not send msgIn back (already has msg.success==false)
 				if (validated) {
 					switch(msgIn.perform) {
 					
-					case LOGOUT: msgOut = logout(msgIn); break;
+					case LOGOUT: 
+						if (msgIn.sessionID == sessionID) {
+							msgOut = logout(msgIn);
+						} break;
 					
 //					case ACCESS: 
 //						break;
