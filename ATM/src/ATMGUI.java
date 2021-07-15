@@ -53,7 +53,7 @@ public class ATMGUI {
 		String loginID = "";
 		String Pin = "";
 		String[] credentials = new String[2];
-		loginID = JOptionPane.showInputDialog("Enter title");
+		loginID = JOptionPane.showInputDialog("Enter Card ID");
 		if (loginID == null) {
 			return null;		// dialog was cancelled
 		}
