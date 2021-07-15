@@ -25,12 +25,12 @@ public class DataBase {
 		accountIDs.addID(52704706);
 		
 		Account check = new Account(92837, AccountType.CHECKING);
-		check.setBalance(new Money(23, 16));
+		check.setBalance(new Money(23, 16, true));
 		check.setAttachedCard(true);
 		check.setCardID(567890);
 		
 		Account sav = new Account(52704706, AccountType.SAVINGS);
-		sav.setBalance(new Money(100, 01));
+		sav.setBalance(new Money(100, 01, true));
 		sav.setAttachedCard(true);
 		sav.setCardID(567890);
 		
