@@ -23,7 +23,9 @@ enum Process {
 	SAVE,
 	LOAD,
 	LOGIN,
+	LOGOUT, //when an employee logs out
 	ACCESS,	//when an employee wants Access to a customer
+	DISMISS,	//when a customer is finished with Teller (Customer logout)
 	GET_ID	//Most ids come from the server. This indicates an id request.
 }
 

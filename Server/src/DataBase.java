@@ -17,6 +17,8 @@ public class DataBase {
 	//maps cards to their Customers, more efficient than searching each Customer then each Acct
 	private HashMap<Integer, Integer> cardToCustomerTable = new HashMap<>();
 	
+	//TODO make employee initials to id hashmap, value would be list of employee ids, key: "first a" or "last g"
+	
 	public int getNewCustomerID() {
 		return customerIDs.findNewID();
 	}
