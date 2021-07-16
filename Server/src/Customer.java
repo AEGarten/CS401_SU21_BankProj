@@ -12,6 +12,8 @@ public class Customer {
 	private Date opened = new Date();
 	private Date closed = null;
 	
+	//TODO cardConnected boolean, hashmap of cards to id, delete card to customer table fr db
+	
 	
 	public Customer(int id, String name) {
 		this.id = id;
