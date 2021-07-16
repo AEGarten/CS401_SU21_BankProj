@@ -84,6 +84,7 @@ public class Server {
 		private boolean validated = false; //has the clients credentials been validated
 		ClientInfo clientInfo;	//clientType, re: Customer id, isSupervisor
 		int sessionID = 0;	//continues session after closing connection w/o login each time
+		boolean closeConnection = false;	//close out client connection
 		
 		public ClientHandler(Socket newClient) { this.client = newClient; }
 		
@@ -96,106 +97,75 @@ public class Server {
 				ObjectInputStream frClient = new ObjectInputStream(client.getInputStream());
 				ObjectOutputStream toClient = new ObjectOutputStream(client.getOutputStream());
 			){
-				
-				boolean closeOut = false;	//close out client connection
-				while (!closeOut) {
+				while (!closeConnection) {
 				
 					Message msgOut = null;
 					Message msgIn = (Message) frClient.readObject();
 					
 					//if not validated, attempt login
 					if (!validated) {
-						if (msgIn.perform == Process.LOGIN) {
+						if (msgIn instanceof ATMLogin) {
 							
-							//if from ATM
-							if (msgIn.packet instanceof ATMPacket) {
-								
-								//fail out if not online
-								if (!online) {
-									msgOut = fail(msgIn);
-									msgOut.perform = Process.SHUTDOWN;
-									closeOut = true;
-									break;
-								}
-								
-								clientInfo.reCustomerID = db.getCustomerFromCard(
-										msgIn.packet.actOnID		//should be card id
-										);
-								
-								//if 0 then could be null, good point to stop instead of synch for db access
-								if (clientInfo.reCustomerID <= 0) {
-									toClient.writeObject(fail(msgIn));
-									break;
-								}
-								
-								msgOut = validateATM(msgIn);
-								toClient.writeObject(msgOut);	//response
-								msgIn = (Message) frClient.readObject(); //new input
-								
-							}
-							//if from Teller
-							else {
-								
-								//TODO update when employee updated
-								if (msgIn.authentication.equals("Login, Password")) {
-									validated = true;
-									clientInfo = new ClientInfo(ClientType.TELLER, 0, false); 
-									sessionID = Server.reserveSessionID(clientInfo);
-									
-									if (!online && !clientInfo.isSupervisor) {
-										msgOut = fail(msgIn);
-										msgOut.perform = Process.SHUTDOWN;
-										closeOut = true;
-										break;
-									}
-									
-									msgOut = new Message(sessionID, msgIn.id, true);
-									
-									toClient.writeObject(msgOut);	//response
-									msgIn = (Message) frClient.readObject(); //new input
-								}
-							}
-						}
-						
-						//no login, see if valid sessionID
-						else if (sessionIDs.contains(msgIn.sessionID)) {
-							clientInfo = sessionIDs.get(msgIn.sessionID);
-							
-							//if shutdown, send back shutdown and close out connection
-							//still allow supervisor access to bring back online
-							if (!online && !clientInfo.isSupervisor) {
-								sessionID = 0;
-								msgOut = fail(msgIn);
-								msgOut.perform = Process.SHUTDOWN;
-								closeOut = true;
+							//fail out if not online
+							if (!online) {
+								msgOut = fail(msgIn, "Server not Online");
+								closeConnection = true;
 								break;
 							}
 							
-							validated = true;
-							sessionID = msgIn.sessionID;
+							ATMLogin ATMmsg = (ATMLogin) msgIn;
+							clientInfo.reCustomerID = db.getCustomerFromCard(ATMmsg.cardID);
+							
+							//if 0 then could be null, good point to stop instead of synch for db access
+							if (clientInfo.reCustomerID <= 0) {
+								toClient.writeObject(fail(msgIn, "invalid Card ID"));
+								break;
+							}
+							
+							msgOut = validateATM(ATMmsg);
+							toClient.writeObject(msgOut);	//response
+							
+							msgIn = (Message) frClient.readObject(); //new input
 						}
+						//if from Teller
+						else if (msgIn instanceof TellerLogin) {
+							TellerLogin Tmsg = (TellerLogin) msgIn;
+							
+							//TODO update when employee updated
+							if (Tmsg.login.equals("Login") && Tmsg.password == "Password") {
+								validated = true;
+								clientInfo = new ClientInfo(ClientType.TELLER, 0, false); //no Customer to access yet, so 0
+								sessionID = Server.reserveSessionID(clientInfo);
+								
+								if (!online && !clientInfo.isSupervisor) {
+									msgOut = fail(msgIn, "Server not Online, Supervisor access required");
+									closeConnection = true;
+									break;
+								}
+								
+								msgOut = new TellerLogin(sessionID, msgIn.id, true);
+								
+								toClient.writeObject(msgOut);	//response
+								msgIn = (Message) frClient.readObject(); //new input
+							}
+						}	
+							
 						else break;	//no login, no valid sessionID, close connection
 					}
 					//by now should be valid, if not send msgIn back (already has msg.success==false)
 					if (validated) {
 						switch(msgIn.perform) {
 						
-						case LOGOUT: {
-							msgOut = logout(msgIn);
-							closeOut = true;
-						} break;
+						case LOGOUT: msgOut = logout(msgIn); break;
 						
-						case ACCESS: msgOut = access(msgIn); break;
+						case ACCESS: msgOut = access((CustomerAccess) msgIn); break;
 							
 	//					case ADD_ACCOUNT:
 	//						break;
 	//					case ADD_EMPLOYEE:
 	//						break;
 						
-						case BALANCE: {
-							msgOut = balance(msgIn); 
-							closeOut = true;
-						} break;
+						case BALANCE: msgOut = balance((Balance) msgIn);  break;
 							
 	//					case CHANGE_PASSWORD:
 	//						break;
@@ -231,12 +201,13 @@ public class Server {
 	//						break;
 	//					case WITHDRAWAL:
 	//						break;
-						default: toClient.writeObject(fail(msgIn)); break;
+						default: toClient.writeObject(fail(msgIn, "invalid Process")); break;
 							
+
 						}
-						
 					}
-					else toClient.writeObject(fail(msgIn));
+					
+					else toClient.writeObject(fail(msgIn, "need Login object"));
 				}
 			}
 			catch (ClassNotFoundException e) { e.printStackTrace(); }
@@ -249,13 +220,13 @@ public class Server {
 			
 		}
 		
-		public Message fail(Message m) { return new Message(sessionID, m.id); }
+		public Message fail(Message m, String why) { return new Message(m, why); }
 		
-		public Message success(int sessionID, int id) { return new Message(sessionID, id, true); }
+		public Message success(Message m) { return new Message(m.sessionID, m.id, true); }
 		
-		public Message validateATM(Message in) {
+		public Message validateATM(ATMLogin in) {
 			Customer customer = db.findCustomer(clientInfo.reCustomerID);
-			if (in.authentication.equals(customer.getPIN())) {
+			if (in.PIN == customer.getPIN()) {
 				validated = true;
 				clientInfo = new ClientInfo(ClientType.ATM, customer.getID(), false);
 				sessionID = reserveSessionID(clientInfo);
@@ -270,7 +241,7 @@ public class Server {
 					if (a.hasAttachedCard()) {
 						
 						if (!gotChecking && a.getType() == AccountType.CHECKING) {
-							if (a.getCardID() == in.packet.actOnID) {
+							if (a.getCardID() == in.cardID) {
 								checkID = a.getID();
 								checkPosStat = a.isPositiveStatus();
 								
@@ -279,7 +250,7 @@ public class Server {
 							}
 						}
 						else if (!gotSavings && a.getType() == AccountType.CHECKING) {
-							if (a.getCardID() == in.packet.actOnID) {
+							if (a.getCardID() == in.cardID) {
 								savID = a.getCardID();
 								savPosStat = a.isPositiveStatus();
 								
@@ -291,49 +262,48 @@ public class Server {
 					}
 				}
 				
-				Message out = success(sessionID, in.id);
-				out.packet = new ATMPacket(checkID, savID, checkPosStat, savPosStat);
+				Message out = new ATMLogin(checkID, savID, checkPosStat, savPosStat, sessionID, in);
+				
 				return out;
 			}
-			return fail(in);
+			return fail(in, "no Accounts with Attached Card");
 		}
 		
 		public Message logout(Message in) {
-			Message out = success(sessionID, in.id);
+			Message out = success(in);
 			sessionIDs.remove(sessionID);
+			closeConnection = true;
 			return out;
 		}
 		
-		public Message access(Message in) {
+		public Message access(CustomerAccess in) {
 			Message out;
-			CustomerPacket cust = new CustomerPacket();
-			cust.customer = db.findCustomer(in.packet.actOnID);
+			in.customer = db.findCustomer(in.customerID);
 			
-			if (cust.customer == null) out = fail(in);
+			if ( in.customer == null || 
+					!in.passcode.equals(in.customer.getPasscode()) ) 
+						out = fail(in, "no matching customer");
 			else {
-				out = success(sessionID, in.id);
-				clientInfo = new ClientInfo(ClientType.TELLER, in.packet.actOnID, false);
-				out.packet = cust;
+				out = new CustomerAccess(in.customer, in);
+				clientInfo = new ClientInfo(ClientType.TELLER, in.customer.getID(), false);
 			}
 			return out; 
 		}
 		
 		public Message dismiss(Message in) {
-			Message out = new Message(reserveSessionID(clientInfo), in.id, true);
-			sessionIDs.remove(sessionID);
-			validated = false;
+			Message out = success(in);
+			closeConnection = true;
 			return out;
 		}
 		
 		//need to know customer before can act on acctID
-		public Message balance(Message in) {
+		public Message balance(Balance in) {
 			Customer cust = db.findCustomer(clientInfo.reCustomerID);
-			if (cust == null) return fail(in);
-			Account acct = cust.findAccount(in.packet.actOnID);
-			if (acct == null) return fail(in);
-			Message out = new Message(reserveSessionID(clientInfo), in.id, true);
-			sessionIDs.remove(sessionID);
-			out.packet.amount = acct.getBalance();
+			if (cust == null) return fail(in, "no matching Customer");
+			Account acct = cust.findAccount(in.accountID);
+			if (acct == null) return fail(in, "no matching Account");
+			Message out = new Balance(acct.getBalance(), in);
+			closeConnection = true;
 			return out;
 		}
 			

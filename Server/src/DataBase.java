@@ -3,19 +3,22 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class DataBase {
 	
 	private UniqueIDs customerIDs = new UniqueIDs();
 	private UniqueIDs accountIDs = new UniqueIDs();
-//	private UniqueIDs employeeIDs = new UniqueIDs();
-//	private Set<String> employeeLogins = Collections.synchronizedSet(new HashSet<>());
+	private UniqueIDs employeeIDs = new UniqueIDs();
 	
 	private ArrayList<Customer> customers = new ArrayList<>();
-//	private ArrayList<Employee> employees = new ArrayList<>();
+	private ArrayList<Employee> employees = new ArrayList<>();
 	
 	//maps cards to their Customers, more efficient than searching each Customer then each Acct
 	private HashMap<Integer, Integer> cardToCustomerTable = new HashMap<>();
+	
+	//maps employee logins to their id, concurrent because it changes while Sever Onlines
+	private ConcurrentHashMap<String, Integer> loginToIDTable = new ConcurrentHashMap<>();
 	
 	public DataBase() {
 		//TODO remove hardcoding after FileManager added
@@ -38,6 +41,13 @@ public class DataBase {
 		cust.addAccount(check);
 		cust.addAccount(sav);
 		customers.add(cust);
+		
+		employeeIDs.addID(197);
+		loginToIDTable.put("Login", 197);
+		
+		Employee employee = new Employee("Dummy Employee", 197, "Login", "Password");
+		employees.add(employee);
+		
 	}
 	
 	public int getCustomerFromCard(int cardNum) {
@@ -146,14 +156,6 @@ public class DataBase {
 //		return true;
 //	}
 	
-//	public synchronized boolean addCustomer(Customer c) {
-//		boolean success = false;
-//			 
-//		success = customers.add(c) && 
-//				customerIDs.addID(c.getID());
-//		Collections.sort(customers, (a, b) -> a.getID() - b.getID());
-//		return success;
-//	}
 	
 	
 }

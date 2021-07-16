@@ -6,12 +6,14 @@ public class Customer {
 	private final int id;
 	private String name;
 	private String passcode;
-	private String PIN;
+	private int PIN;
 	private int numSavings;
 	private int numChecking;
 	private ArrayList<Account> accounts = new ArrayList<>();
 	private Date opened = new Date();
 	private Date closed = null;
+	
+	//TODO cardConnected boolean, hashmap of cards to id, delete card to customer table fr db
 	
 	
 	public Customer(int id, String name) {
@@ -23,8 +25,8 @@ public class Customer {
 	public Customer(
 			int id, String name,
 			String passcode, int numSavings,
-			int numChecking, String PIN, 
-			Date opened, Date closed) {
+			int numChecking, int PIN, 
+			Date opened) {
 		
 		this(id, name);
 		this.passcode = passcode;
@@ -32,7 +34,6 @@ public class Customer {
 		this.numChecking = numChecking;
 		this.PIN = PIN;
 		this.opened = opened;
-		this.closed = closed;
 	}
 	
 	public String getName() { return this.name; }
@@ -53,8 +54,8 @@ public class Customer {
 	public Date getClosed() { return this.closed; }
 	public void setClosed(Date d) { this.closed = d; }
 	
-	public String getPIN() { return this.PIN; }
-	public void setPIN(String PIN) { this.PIN = PIN; }
+	public int getPIN() { return this.PIN; }
+	public void setPIN(int PIN) { this.PIN = PIN; }
 	
 	public int getID() { return this.id; }
 	
