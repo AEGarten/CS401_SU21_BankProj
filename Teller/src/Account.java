@@ -11,7 +11,7 @@ public class Account {
 	private Date closed;
 	private boolean attachedCard = false;  //is there an ATM assoc w this account
 	private int cardID;						//if so what is the card id
-	private ArrayList<Pending> pendings = new ArrayList<>();	
+
 	private ArrayList<Fee> fees = new ArrayList<>();	
 	
 	public Account(int id, AccountType at) {
@@ -55,33 +55,15 @@ public class Account {
 	public int getCardID() { return this.cardID; }
 	public void setCardID(int cid) { this.cardID = cid; }
 	
-	public ArrayList<Pending> getPendings(){ return this.pendings; }
-	public void setPendings(ArrayList<Pending> p){ this.pendings = p; }
-	
 	public ArrayList<Fee> getFees(){ return this.fees; }
 	public void setFees(ArrayList<Fee> f){ this.fees = f; }
 	
 	public int getID() { return this.id; }
 	
 	public AccountType getType() { return this.type; }
-
-	public boolean addPending(Pending p) { 
-		return this.pendings.add(p); 
-	}
 	
 	public boolean addFee(Fee f) { 
 		return this.fees.add(f); 
-	}
-	
-	public Pending findPending(Date d) {
-		for (Pending p: pendings)
-			if (p.date.compareTo(d) == 0) return p;
-		
-		return null;
-	}
-	
-	public boolean removePending(Pending p) {
-		return pendings.remove(p);
 	}
 	
 	public Fee findFee(Date d) {
