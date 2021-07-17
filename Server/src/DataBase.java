@@ -124,6 +124,16 @@ public class DataBase {
 		return success;
 	}
 	
+	public synchronized boolean addEmployee(Employee e) {
+		boolean success = false;
+		
+		if (employeeIDs.addID(e.getEmployeeID()) && employees.add(e)) {
+			success = true;
+			Collections.sort(employees, (a, b) -> a.getEmployeeID() - b.getEmployeeID()); //only sort if add successful
+		}
+		return success;
+	}
+	
 	public synchronized Employee findEmployee(int empID) {
 		int foundIndex;
 		Employee key = new Employee("", empID, "", "");
