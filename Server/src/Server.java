@@ -80,11 +80,11 @@ public class Server {
 							sessionID = Server.getSessionID();
 							type = ClientType.ATM;
 							
-							//TODO: replace with ATMPacket constructor when deployed
+							
 							msgOut = new ATMLogin(92837, 52704706, true, true, sessionID, msgATM.id, true);
-							
-							
 							toClient.writeObject(msgOut);
+							
+							msgIn = (Message) frClient.readObject();
 							
 						}
 						//if from Teller
@@ -93,7 +93,7 @@ public class Server {
 					else if (msgIn instanceof TellerLogin) {
 						TellerLogin Tmsg = (TellerLogin) msgIn;
 						
-						if (Tmsg.login.equals("Login") && Tmsg.password == "Password") {
+						if (Tmsg.login.equals("Login") && Tmsg.password.equals("Password")) {
 							validated = true;
 							sessionID = Server.getSessionID();
 							type = ClientType.TELLER;
@@ -112,7 +112,7 @@ public class Server {
 					
 					case LOGOUT: 
 						if (msgIn.sessionID == sessionID) {
-							msgOut = logout(msgIn);
+							msgOut = logout((Logout) msgIn);
 						} break;
 					
 //					case ACCESS: 
@@ -179,10 +179,9 @@ public class Server {
 			
 		}
 		
-		public Message logout(Message in) {
-			Message out = new Message(this.sessionID, in.id, true);
+		public Logout logout(Logout in) {
 			this.sessionID = 0;
-			return out;
+			return new Logout(in, true);
 		}
 			
 	}
