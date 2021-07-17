@@ -1,3 +1,4 @@
+
 import java.util.Date;
 
 public class LastTransaction {
@@ -17,5 +18,13 @@ public class LastTransaction {
 		this.priorBalance = lastBalance;
 		this.changeInBalance = changeInBal;
 		this.type = type;
+	}
+	
+	public String toString() {
+		String out = date.getMonth() +"/"+ date.getDate() +"/"+ (date.getYear() - 100) + 
+				" "+ date.getHours() +":"+ String.format("%02d", date.getMinutes()) + 
+				" $"+ priorBalance +" "+ changeInBalance +" "+ type;
+		
+		return out;
 	}
 }
