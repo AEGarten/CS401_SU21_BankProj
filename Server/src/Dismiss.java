@@ -15,26 +15,16 @@
 	 * +Message(Message, why)			//server: fail
 	 */
 
-public class CustomerAccess extends Message {
-	String passcode = "";
-	int customerID = 0;
-	Customer customer = null;
+
+public class Dismiss extends Message {
 	
 	//Teller
-	CustomerAccess(int sessionID, String passcode, int customerID){
-		super(sessionID, Process.ACCESS);
-		this.passcode = passcode;
-		this.customerID = customerID;
+	public Dismiss(int sessionID) {
+		super(sessionID, Process.DISMISS);
 	}
 	
-	//Server success
-	CustomerAccess(Customer c, Message m){
-		super(m.sessionID, m.id, true);
-		this.customer = c;
+	//Server
+	public Dismiss(Message m) {
+		super(m, true);
 	}
-	
-	//Server fail
-		CustomerAccess(Message m, String why){
-			super(m, why);
-		}
 }

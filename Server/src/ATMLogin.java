@@ -16,12 +16,12 @@
 	 */
 
 public class ATMLogin extends Message {
-	public int checkingID;
-	public int savingsID;
-	public boolean checkingPositive;
-	public boolean savingsPositive;
-	public int cardID;
-	public int PIN;
+	public int checkingID = 0;
+	public int savingsID = 0;
+	public boolean checkingPositive = false;
+	public boolean savingsPositive = false;
+	public int cardID = 0;
+	public int PIN = 0;
 	
 	//ATM
 	public ATMLogin(int cardID, int PIN) {
@@ -30,13 +30,18 @@ public class ATMLogin extends Message {
 		this.PIN = PIN;
 	}
 	
-	//for server use
+	//server success
 	public ATMLogin(int checkID, int savID, boolean checkPos, boolean savPos, int sessionID, Message m) {
 		super(m.sessionID, m.id, true);
 		this.checkingID = checkID;
 		this.savingsID = savID;
 		this.checkingPositive = checkPos;
 		this.savingsPositive = savPos;
+	}
+	
+	//server fail
+	public ATMLogin(Message m, String why) {
+		super(m, why);
 	}
 
 }

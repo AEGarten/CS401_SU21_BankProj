@@ -1,7 +1,7 @@
 
 public class TellerLogin extends Message {
-	String login;
-	String password;
+	String login = "";
+	String password = "";
 	
 	//for Teller
 	public TellerLogin(String login, String pw) {
@@ -10,13 +10,13 @@ public class TellerLogin extends Message {
 		this.password = pw;
 	}
 	
-	//for Server
+	//for Server, success
 	public TellerLogin(int sessionID, int id, boolean success) {
 		super(sessionID, id, success);
 	}
 	
-	//for Server
-	public TellerLogin(Message m) {
-		super(m);
+	//for Server, fail
+	public TellerLogin(Message m, String why) {
+		super(m, why);
 	}
 }

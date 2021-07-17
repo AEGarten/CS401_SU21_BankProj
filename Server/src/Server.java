@@ -18,7 +18,7 @@ public class Server {
 	private static int idCount = 0;
 	private static Random rand = new Random();
 	private static int port;
-	private static DataBase db;
+	private static DataBase db = new DataBase();
 	private static boolean stopping = false;
 	private static boolean online = true;
 	//TODO add shutdown precaution when active (mutators) Clients present
@@ -65,6 +65,7 @@ public class Server {
 			try (
 				ServerSocket serverSocket = new ServerSocket(Server.port);
 			){
+				serverSocket.setReuseAddress(true);
 				while (!stopping) {
 					newClient = serverSocket.accept();
 					new Thread(new ClientHandler(newClient)).start();
@@ -82,8 +83,8 @@ public class Server {
 	private static class ClientHandler implements Runnable {
 		private final Socket client;
 		private boolean validated = false; //has the clients credentials been validated
-		ClientInfo clientInfo;	//clientType, re: Customer id, isSupervisor
 		int sessionID = 0;	//continues session after closing connection w/o login each time
+		ClientInfo clientInfo = new ClientInfo(null, sessionID, false);	//clientType, re: Customer id, isSupervisor
 		boolean closeConnection = false;	//close out client connection
 		
 		public ClientHandler(Socket newClient) { this.client = newClient; }
@@ -98,14 +99,16 @@ public class Server {
 				ObjectOutputStream toClient = new ObjectOutputStream(client.getOutputStream());
 			){
 				while (!closeConnection) {
-				
+System.out.println("validating ...");				
 					Message msgOut = null;
 					Message msgIn = (Message) frClient.readObject();
 					
 					//if not validated, attempt login
 					if (!validated) {
+						
+
 						if (msgIn instanceof ATMLogin) {
-							
+System.out.println("ATM type ...");							
 							//fail out if not online
 							if (!online) {
 								msgOut = fail(msgIn, "Server not Online");
@@ -156,7 +159,7 @@ public class Server {
 					if (validated) {
 						switch(msgIn.perform) {
 						
-						case LOGOUT: msgOut = logout(msgIn); break;
+						case LOGOUT: msgOut = logout((Logout) msgIn); break;
 						
 						case ACCESS: msgOut = access((CustomerAccess) msgIn); break;
 							
@@ -176,7 +179,7 @@ public class Server {
 	//					case DEPOSIT:
 	//						break;
 						
-						case DISMISS: msgOut = dismiss(msgIn); break;
+						case DISMISS: msgOut = dismiss((Dismiss) msgIn); break;
 
 	//					case DIVIDEND:
 	//						break;
@@ -215,6 +218,7 @@ public class Server {
 			finally {
 				try { if (client != null) client.close(); } 
 				catch (Exception e) { e.printStackTrace(); }
+System.out.println("Thread closed");
 			}
 			
 			
@@ -222,9 +226,7 @@ public class Server {
 		
 		public Message fail(Message m, String why) { return new Message(m, why); }
 		
-		public Message success(Message m) { return new Message(m.sessionID, m.id, true); }
-		
-		public Message validateATM(ATMLogin in) {
+		public ATMLogin validateATM(ATMLogin in) {
 			Customer customer = db.findCustomer(clientInfo.reCustomerID);
 			if (in.PIN == customer.getPIN()) {
 				validated = true;
@@ -262,27 +264,26 @@ public class Server {
 					}
 				}
 				
-				Message out = new ATMLogin(checkID, savID, checkPosStat, savPosStat, sessionID, in);
+				ATMLogin out = new ATMLogin(checkID, savID, checkPosStat, savPosStat, sessionID, in);
 				
 				return out;
 			}
-			return fail(in, "no Accounts with Attached Card");
+			return new ATMLogin(in, "no attached card"); //fail
 		}
 		
-		public Message logout(Message in) {
-			Message out = success(in);
+		public Logout logout(Logout in) {
 			sessionIDs.remove(sessionID);
 			closeConnection = true;
-			return out;
+			return new Logout(in);
 		}
 		
-		public Message access(CustomerAccess in) {
-			Message out;
+		public CustomerAccess access(CustomerAccess in) {
+			CustomerAccess out;
 			in.customer = db.findCustomer(in.customerID);
 			
 			if ( in.customer == null || 
 					!in.passcode.equals(in.customer.getPasscode()) ) 
-						out = fail(in, "no matching customer");
+						out = new CustomerAccess(in, "no matching customer");
 			else {
 				out = new CustomerAccess(in.customer, in);
 				clientInfo = new ClientInfo(ClientType.TELLER, in.customer.getID(), false);
@@ -290,10 +291,8 @@ public class Server {
 			return out; 
 		}
 		
-		public Message dismiss(Message in) {
-			Message out = success(in);
-			closeConnection = true;
-			return out;
+		public Dismiss dismiss(Dismiss in) {
+			return new Dismiss(in);
 		}
 		
 		//need to know customer before can act on acctID

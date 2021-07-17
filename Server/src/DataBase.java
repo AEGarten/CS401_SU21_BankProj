@@ -51,7 +51,10 @@ public class DataBase {
 	}
 	
 	public int getCustomerFromCard(int cardNum) {
-		return cardToCustomerTable.get(cardNum);
+		if (cardToCustomerTable.containsKey(cardNum)) 
+			return cardToCustomerTable.get(cardNum);
+		
+		return 0;
 	}
 	
 	private void addCardToCustomer(int cardNum, int customerID) {
@@ -121,40 +124,40 @@ public class DataBase {
 		return success;
 	}
 	
-//	public synchronized Employee findEmployee(String empID) {
-//		int foundIndex;
-//		Employee key = new Employee("", empID, "");
-//			
-//		foundIndex = Collections.binarySearch(employees, key, 
-//			(a, b) -> a.getLoginID().compareTo(b.getLoginID()));		
-//		return (foundIndex > -1) ? employees.get(foundIndex) : null;
-//	}
+	public synchronized Employee findEmployee(int empID) {
+		int foundIndex;
+		Employee key = new Employee("", empID, "", "");
+			
+		foundIndex = Collections.binarySearch(employees, key, 
+			(a, b) -> a.getEmployeeID() - b.getEmployeeID() );		
+		return (foundIndex > -1) ? employees.get(foundIndex) : null;
+	}
 	
-//	public synchronized boolean setEmployee(Employee e) {
-//		int toReplace;
-//		
-//		toReplace = Collections.binarySearch(employees, e, 
-//				(a, b) -> a.getLoginID().compareTo(b.getLoginID()));
-//		
-//		if (toReplace > -1) {
-//			
-//			//delete it and replace, does not affect sort order
-//			employees.remove(toReplace);
-//			employees.add(toReplace, e);
-//			return true;				//finally executes before return
-//		}	
-//		return false;		
-//	}
+	public synchronized boolean setEmployee(Employee e) {
+		int toReplace;
+		
+		toReplace = Collections.binarySearch(employees, e, 
+				(a, b) -> a.getEmployeeID() - b.getEmployeeID());
+		
+		if (toReplace > -1) {
+			
+			//delete it and replace, does not affect sort order
+			employees.remove(toReplace);
+			employees.add(toReplace, e);
+			return true;				//finally executes before return
+		}	
+		return false;		
+	}
 	
-//	public synchronized boolean removeEmployee(String id) {
-//		Customer toRemove = findEmployee(id);
-//		if (toRemove == null) return false; //fail to find
-//
-//		//does not affect sort order
-//		customers.remove(toRemove); 		
-//		customerIDs.removeID(toRemove.getID());
-//		return true;
-//	}
+	public synchronized boolean removeEmployee(int id) {
+		Employee toRemove = findEmployee(id);
+		if (toRemove == null) return false; //fail to find
+
+		//does not affect sort order
+		customers.remove(toRemove); 		
+		customerIDs.removeID(toRemove.getEmployeeID());
+		return true;
+	}
 	
 	
 	
