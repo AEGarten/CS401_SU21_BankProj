@@ -5,7 +5,9 @@ public class Account {
 	
 	private final int id;
 	private final AccountType type;
-	private Money balance;
+
+	private Money balance = new Money();
+	private boolean positiveStatus = false;
 	private LastTransaction lastTransaction;
 	private Date opened = new Date();
 	private Date closed;
@@ -38,7 +40,7 @@ public class Account {
 	public boolean isPositiveStatus() { return this.balance.isGreater(new Money()); }
 	
 	public LastTransaction getLastTransaction() { return this.lastTransaction; }
-	public void setPositiveStatus(LastTransaction lt) { this.lastTransaction = lt; }
+	public void setLastTransaction(LastTransaction lt) { this.lastTransaction = lt; }
 	
 	public Money getBalance() { return this.balance; }
 	public void setBalance(Money b) { this.balance = b; }
@@ -77,5 +79,24 @@ public class Account {
 		return fees.remove(f);
 	}
 	
+	public String toString() {
+		return "#"+ id +" "+ type +" $"+ balance;
+	}
+	
+	public String details() {
+		String out = "#"+ id +" "+ type +" $"+ balance + " opened:" +
+		opened.getMonth() +"/"+ opened.getDate() +"/"+ (opened.getYear() - 100);
+		if (closed != null && closed.after(opened)) {
+			out += " Closed:"+ closed.getMonth() +"/"+ closed.getDate() +"/"+ (closed.getYear() - 100);
+		}
+		out += "\n";
+		
+		if (lastTransaction != null) out += "Last transaction " + lastTransaction +"\n";
+		if (!fees.isEmpty()) {
+			out += "Fees:\n";
+			for (Fee f: fees) out += "\t"+ f +"\n";
+		}
+		return out;
+	}
 	
 }

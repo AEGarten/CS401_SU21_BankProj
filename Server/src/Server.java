@@ -127,15 +127,18 @@ System.out.println("ATM type ...");
 							
 							msgOut = validateATM(ATMmsg);
 							toClient.writeObject(msgOut);	//response
+
 							
+
 							msgIn = (Message) frClient.readObject(); //new input
+
 						}
 						//if from Teller
 						else if (msgIn instanceof TellerLogin) {
 							TellerLogin Tmsg = (TellerLogin) msgIn;
 							
 							//TODO update when employee updated
-							if (Tmsg.login.equals("Login") && Tmsg.password == "Password") {
+							if (Tmsg.login.equals("Login") && Tmsg.password.equals("Password")) {
 								validated = true;
 								clientInfo = new ClientInfo(ClientType.TELLER, 0, false); //no Customer to access yet, so 0
 								sessionID = Server.reserveSessionID(clientInfo);
@@ -162,6 +165,7 @@ System.out.println("ATM type ...");
 						case LOGOUT: msgOut = logout((Logout) msgIn); break;
 						
 						case ACCESS: msgOut = access((CustomerAccess) msgIn); break;
+
 							
 	//					case ADD_ACCOUNT:
 	//						break;
@@ -212,6 +216,7 @@ System.out.println("ATM type ...");
 					
 					else toClient.writeObject(fail(msgIn, "need Login object"));
 				}
+
 			}
 			catch (ClassNotFoundException e) { e.printStackTrace(); }
 			catch (IOException e) { e.printStackTrace(); }
@@ -304,6 +309,7 @@ System.out.println("Thread closed");
 			Message out = new Balance(acct.getBalance(), in);
 			closeConnection = true;
 			return out;
+
 		}
 			
 	}

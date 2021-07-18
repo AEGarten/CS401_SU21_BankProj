@@ -1,16 +1,30 @@
+
 import java.util.Date;
 
 public class LastTransaction {
-	public Date date;
+	public Date date = new Date();
 	public Money priorBalance;
 	public Money changeInBalance;
 	public String type;
 	
-	public LastTransaction(Date date, Money balance, Money changeInBal, String type) {
+	//for backup file
+	public LastTransaction(Date date, Money lastBalance, Money changeInBal, String type) {
+		this(lastBalance, changeInBal, type);
 		this.date = date;
-		this.priorBalance = balance;
+	}
+	
+	//for regular use
+	public LastTransaction(Money lastBalance, Money changeInBal, String type) {
+		this.priorBalance = lastBalance;
 		this.changeInBalance = changeInBal;
 		this.type = type;
 	}
 	
+	public String toString() {
+		String out = date.getMonth() +"/"+ date.getDate() +"/"+ (date.getYear() - 100) + 
+				" "+ date.getHours() +":"+ String.format("%02d", date.getMinutes()) + 
+				" $"+ priorBalance +" "+ changeInBalance +" "+ type;
+		
+		return out;
+	}
 }

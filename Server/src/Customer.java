@@ -80,4 +80,34 @@ public class Customer {
 		return true;
 	}
 	
+	public String toString() {
+		String out;
+		out = "#"+ id +" "+ name;
+		if (closed != null && closed.after(opened)) {
+			out += " closed:"+ closed.getMonth() +"/"+ closed.getDate() +"/"+ (closed.getYear() - 100);
+		}
+		out += "\n";
+		
+		for(Account a: accounts) {
+			if (a.getClosed() != null && a.getClosed().after(a.getOpened())) continue;
+			else out += a +"\n";
+		}
+		return out;
+	}
+	
+	public String details() {
+		String out;
+		out = "#"+ id +" "+ name +" opened:"+ 
+				opened.getMonth() +"/"+ opened.getDate() +"/"+ (opened.getYear() - 100);
+		if (closed != null && closed.after(opened)) {
+			out += " closed:"+ closed.getMonth() +"/"+ closed.getDate() +"/"+ (closed.getYear() - 100);
+		}
+		out += "\n";
+		
+		for(Account a: accounts) out += a.details() +"\n";
+		return out;
+	}
+	
+	
+	
 }
