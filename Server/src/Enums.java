@@ -17,7 +17,6 @@ enum Process {
 	REMOVE_EMPLOYEE,	//Supervisor only
 	CHANGE_PASSWORD,	//Supervisor only
 	DIVIDEND,			//Supervisor only
-	PENDING,			//Supervisor only
 	ONLINE,				//Supervisor only
 	SHUTDOWN,			//Supervisor only
 	SAVE,				//Supervisor only
@@ -27,8 +26,8 @@ enum Process {
 	ACCESS,				//Teller: when an employee wants Access to a customer
 	DISMISS,			//Teller: when a customer is finished with Teller (Customer logout)
 	
-	GET_ID				//Teller: Most IDs come from the server. This indicates an id request
-						//Need to indicate what id. For account
+	EMPLOYEE_ACCESS,	//Supervisor only
+	EMPLOYEE_DISMISS	//Supervisor only
 }
 
 enum EmployeeType { EMPLOYEE, SUPERVISOR }

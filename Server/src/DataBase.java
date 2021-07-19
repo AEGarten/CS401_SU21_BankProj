@@ -1,11 +1,14 @@
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class DataBase {
+	
+	private Fee overdraftFee = new Fee(new Date(), new Money(25,00, true), "overdraft");
 	
 	private UniqueIDs customerIDs = new UniqueIDs();
 	private UniqueIDs accountIDs = new UniqueIDs();
@@ -49,6 +52,9 @@ public class DataBase {
 		employees.add(employee);
 		
 	}
+	
+	public Fee getOverdraftFee() {return this.overdraftFee; }
+	public void setOverdraftFee(Fee f) { this.overdraftFee = f; }
 	
 	public int getCustomerFromCard(int cardNum) {
 		if (cardToCustomerTable.containsKey(cardNum)) 

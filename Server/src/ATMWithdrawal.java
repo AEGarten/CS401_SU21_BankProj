@@ -15,24 +15,28 @@
 	 * +Message(Message, why)			//server: fail
 	 */
 
-public class Balance extends Message {
-	Money amount;
-	int accountID; 
-
+public class ATMWithdrawal extends Message {
+	public Money amount;
+	public int accountID;
+	boolean accountPositive;
+	
 	//ATM use
-	public Balance(int sessionID, int accountID) {
-		super(sessionID, Process.BALANCE);
-		this.accountID = accountID;
-	}
-
-	//Server success
-	public Balance(Money amount, Message m) {
-		super(m.sessionID, m.id, true);
-		this.amount = amount;
+	public ATMWithdrawal(int sessionID, Money amount, int accountID) {
+		super(sessionID, Process.WITHDRAWAL);
+			this.amount = amount;
+			this.accountID = accountID;
 	}
 	
-	//Server fail
-		public Balance(Message m, String why) {
-			super(m, why);
-		}
+	//Server, success
+	public ATMWithdrawal(Message m, boolean positive) {
+		super(m, true);
+		this.accountPositive = positive;
+	}
+	
+	//Server, fail
+	public ATMWithdrawal(Message m, String why) {
+		super(m, why);
+	}
+	
+	
 }

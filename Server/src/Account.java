@@ -7,7 +7,6 @@ public class Account {
 	private final AccountType type;
 
 	private Money balance = new Money();
-	private boolean positiveStatus = false;
 	private LastTransaction lastTransaction;
 	private Date opened = new Date();
 	private Date closed;
