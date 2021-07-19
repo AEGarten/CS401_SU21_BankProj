@@ -13,10 +13,10 @@ public class Teller {
 	private Employee employee;
 	private ArrayList<Message> messagesOut = new ArrayList<Message>();
 	private Message message;
-	private String sessionID;
+	private int sessionID;
 	private String tellerID;
 	private String tellerPW;
-	private String customerID;
+	private int customerID;
 	private String customerPW;
 	private Boolean connected;
 	private Customer customer;
@@ -56,17 +56,19 @@ public class Teller {
 			System.out.println("Enter Employee Password: ");
 			tellerPW = scan.nextln();
 
-			message.authentication = "Login, Password";
-			message.perform = Process.LOGIN;
-			// Send ID/PW to server for verification
-			objectOutputStream.writeObject(message);
+//			message.authentication = "Login, Password";
+//			message.perform = Process.LOGIN;
+//			// Send ID/PW to server for verification
 
+			
+			TellerLogin tLogin = new TellerLogin("Login", "Password");
+			objectOutputStream.writeObject(tLogin);
 			// Receive server response
 			InputStream inputStream = socket.getInputStream();
 			ObjectInputStream objectInputStream = new ObjectInputStream(inputStream);
 
 			// True if connected / False if failed to log in
-			Message receive = (Message) objectInputStream.readObject();
+			TellerLogin receive = (TellerLogin) objectInputStream.readObject();
 			// connected = (Boolean) objectInputStream.readBoolean();
 
 			sessionID = receive.sessionID;
@@ -84,24 +86,23 @@ public class Teller {
 			customerPW = scan.nextln();
 			// messagesOut.add(new Message(customerPW));
 
-			customerMsg = new Message(sessionID);
+//			customerMsg = new Message(sessionID);
+//
+//			customerMsg.perform = Process.ACCESS;
+//			customerMsg.packet.actOnID = "CustomerID";
 
-			customerMsg.perform = Process.ACCESS;
-			customerMsg.packet.actOnID = "CustomerID";
-
-			objectOutputStream.writeObject(customerMsg);
-
+			
+			CustomerAccess cAccess = new CustomerAccess(sessionID, "Passcode", customerID);
+			objectOutputStream.writeObject(cAccess);
+			
 			// Receive server response
 			InputStream inputStream = socket.getInputStream();
 			ObjectInputStream objectInputStream = new ObjectInputStream(inputStream);
 
-			Message receive = (Message) objectInputStream.readObject();
+			CustomerAccess receive = (CustomerAccess) objectInputStream.readObject();
 
-			sessionID = receive.sessionID;
 			connected = receive.success;
-
-			customerPacket = new CustomerPacket();
-			customer = customerPacket.customer;
+			customer = receive.customer;
 		}
 		System.out.println("Customer logged in.");
 		listen();
@@ -121,83 +122,89 @@ public class Teller {
 		case "DEPOSIT":
 			System.out.println("Accounts: " + customer.getAccounts() + "\nChoose Account: ");
 			int acc = scan.nextLine();
-		
 			Account account = customer.findAccount(acc);
 			
-			sendMsg = new Message(sessionID);
-			sendMsg.perform = Process.DEPOSIT;
-			
-			// AccPacket
-			AccountPacket accPacket = new AccountPacket();
-			// sendMsg.packet = accPacket;
-			sendMsg.packet.actOnID = acc; 
-			System.out.println("Is this a check? (Y/N)");
-			String check = scan.nextLine();
-			System.out.println("Enter Check Number");
-			String checkNumber = scan.nextLine();
-			System.out.println("Enter Amount: (Dollars/Pennies)");
-			System.out.println("Enter Dollars: ");
-			double dollar = scan.nextDouble();
-			System.out.println("Enter Pennies: ");
-			double pennies = scan.nextDouble();
-			
-			Money money = new Money(dollar, pennies, true);
-			
-			if (check == "Y") {
-				Pending pend = new Pending(money, checkNumber);
-				account.addPending(pend);
-			}
-			
-			Money newBalance = account.getBalance().add(money);
-			account.setBalance(newBalance);
-			
-			accPacket.account = account;
-			
-			sendMsg.packet = accPacket;
-			Message receive = (Message) objectInputStream.readObject();
-			if (boolean success = receive.success) {
-				System.out.println("Successfully Deposited.");
-				sessionID = receive.sessionID;
-			}
-			
-			break;
-		case "WITHDRAWAL":
-			message.perform = Process.WITHDRAWAL; 
-			break;
-		case "TRANSFER":
-			message.perform = Process.TRANSFER; 
-			break;
-		case "TRANSFER_TOCUSTOMER":
-			System.out.println("Customer Account Number: ")
-			String acc = scan.nextLine();
-			message.perform = TRANSFER_TOCUSTOMER; 
-			break;
-		case "BALANCE":
-			System.out.println(for (var account : customer.getAccounts()) "$"+ account.getBalance()); 
-			break;
-		case "ADD_ACCOUNT":
-			message.perform = Process.ADD_ACCOUNT;
-			objectOutputStream.writeObject(message);
-			Message receive = (Message) objectInputStream.readObject();
-			if (receive.success == true) System.out.println("Successfully Created Account.");
-			int newAccID = receive.packet.actOnID;
-			System.out.println("Checking or Savings:");
-			String response = scan.nextLine();
-			if (response == "CHECKING")	Account account = new Account(newAccID, AccountType.CHECKING);
-			else Account account = new Account(newAccID, AccountType.SAVINGS);
-			AccountPacket newPacket = new AccountPacket();
-			newPacket.account = account;
-			message.packet = newPacket;
-			objectOutputStream.writeObject(message);
-			receive = (Message) objectInputStream.readObject();
-			if (receive.success == true) System.out.println("Successfully Created " + response + " Account.");
-			else System.out.println("Failed to Create New " + response + " Account");
-		case "CLOSE_ACCOUNT":
-			message.perform = Process.CLOSE_ACCOUNT; 
-			break;
-		case "LOGOUT":
-			message.perform = Process.LOGOUT; 
-			break;
 		}
+//		case "DEPOSIT":
+//			System.out.println("Accounts: " + customer.getAccounts() + "\nChoose Account: ");
+//			int acc = scan.nextLine();
+//		
+//			Account account = customer.findAccount(acc);
+//			
+//			sendMsg = new Message(sessionID);
+//			sendMsg.perform = Process.DEPOSIT;
+//			
+//			// AccPacket
+//			AccountPacket accPacket = new AccountPacket();
+//			// sendMsg.packet = accPacket;
+//			sendMsg.packet.actOnID = acc; 
+//			System.out.println("Is this a check? (Y/N)");
+//			String check = scan.nextLine();
+//			System.out.println("Enter Check Number");
+//			String checkNumber = scan.nextLine();
+//			System.out.println("Enter Amount: (Dollars/Pennies)");
+//			System.out.println("Enter Dollars: ");
+//			double dollar = scan.nextDouble();
+//			System.out.println("Enter Pennies: ");
+//			double pennies = scan.nextDouble();
+//			
+//			Money money = new Money(dollar, pennies, true);
+//			
+//			if (check == "Y") {
+//				Pending pend = new Pending(money, checkNumber);
+//				account.addPending(pend);
+//			}
+//			
+//			Money newBalance = account.getBalance().add(money);
+//			account.setBalance(newBalance);
+//			
+//			accPacket.account = account;
+//			
+//			sendMsg.packet = accPacket;
+//			Message receive = (Message) objectInputStream.readObject();
+//			if (boolean success = receive.success) {
+//				System.out.println("Successfully Deposited.");
+//				sessionID = receive.sessionID;
+//			}
+//			
+//			break;
+//		case "WITHDRAWAL":
+//			message.perform = Process.WITHDRAWAL; 
+//			break;
+//		case "TRANSFER":
+//			message.perform = Process.TRANSFER; 
+//			break;
+//		case "TRANSFER_TOCUSTOMER":
+//			System.out.println("Customer Account Number: ")
+//			String acc = scan.nextLine();
+//			message.perform = TRANSFER_TOCUSTOMER; 
+//			break;
+//		case "BALANCE":
+//			System.out.println(for (var account : customer.getAccounts()) "$"+ account.getBalance()); 
+//			break;
+//		case "ADD_ACCOUNT":
+//			message.perform = Process.ADD_ACCOUNT;
+//			objectOutputStream.writeObject(message);
+//			Message receive = (Message) objectInputStream.readObject();
+//			if (receive.success == true) System.out.println("Successfully Created Account.");
+//			int newAccID = receive.packet.actOnID;
+//			System.out.println("Checking or Savings:");
+//			String response = scan.nextLine();
+//			if (response == "CHECKING")	Account account = new Account(newAccID, AccountType.CHECKING);
+//			else Account account = new Account(newAccID, AccountType.SAVINGS);
+//			AccountPacket newPacket = new AccountPacket();
+//			newPacket.account = account;
+//			message.packet = newPacket;
+//			objectOutputStream.writeObject(message);
+//			receive = (Message) objectInputStream.readObject();
+//			if (receive.success == true) System.out.println("Successfully Created " + response + " Account.");
+//			else System.out.println("Failed to Create New " + response + " Account");
+//		case "CLOSE_ACCOUNT":
+//			message.perform = Process.CLOSE_ACCOUNT; 
+//			break;
+//		case "LOGOUT":
+//			message.perform = Process.LOGOUT; 
+//			break;
+//		}
 	}
 }
