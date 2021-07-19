@@ -272,9 +272,9 @@ System.out.println("Thread closed");
 								gotChecking = true;
 							}
 						}
-						else if (!gotSavings && a.getType() == AccountType.CHECKING) {
+						else if (!gotSavings && a.getType() == AccountType.SAVINGS) {
 							if (a.getCardID() == in.cardID) {
-								savID = a.getCardID();
+								savID = a.getID();
 								savPosStat = a.isPositiveStatus();
 								
 								if (gotChecking) break; //if already got Checking, then done
@@ -284,12 +284,15 @@ System.out.println("Thread closed");
 						}
 					}
 				}
-				
-				ATMLogin out = new ATMLogin(checkID, savID, checkPosStat, savPosStat, sessionID, in);
+				ATMLogin out;
+				if (gotChecking || gotSavings) {
+					out = new ATMLogin(checkID, savID, checkPosStat, savPosStat, sessionID, in); //success
+				}
+				else out = new ATMLogin(in, "no attached card"); //fail
 				
 				return out;
 			}
-			return new ATMLogin(in, "no attached card"); //fail
+			return new ATMLogin(in, "invalid PIN"); //fail
 		}
 		
 		public Logout logout(Logout in) {

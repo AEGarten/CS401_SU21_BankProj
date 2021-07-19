@@ -41,6 +41,7 @@ public class DataBase {
 		sav.setCardID(567890);
 		
 		Customer cust = new Customer(4543, "Aidan Chartreuse");
+		cust.setPIN(1234);
 		cust.addAccount(check);
 		cust.addAccount(sav);
 		customers.add(cust);

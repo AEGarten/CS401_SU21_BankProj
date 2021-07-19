@@ -1,6 +1,6 @@
+import java.io.Serializable;
 
-
-public class Money {
+public class Money implements Serializable {
 	
 	private int dollars = 0;
 	private int cents = 0;
