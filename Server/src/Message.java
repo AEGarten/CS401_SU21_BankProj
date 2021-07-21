@@ -5,14 +5,16 @@ public class Message implements Serializable {
 	
 	public final Process perform;
 	public final boolean success;
-	public final int id;
-	public final int sessionID;
+	public final int id;			//auto generated from date
+	public final int sessionID;		//continued login
+	public final String why;		//why fail
 	
 	public Message() {
 		this.sessionID = 0;
 		this.id = (int) (new Date().getTime() - 1625500000000L); //get long to int
 		this.success = false;
 		this.perform = Process.LOGIN;
+		this.why = "";
 	}
 	
 	//usually done by Message subclass
@@ -21,6 +23,7 @@ public class Message implements Serializable {
 		this.id = (int) (new Date().getTime() - 1625500000000L); //get long to int
 		this.success = false;
 		this.perform = perform;
+		this.why = "";
 	}
 	
 	//for server, detailed success
@@ -29,14 +32,16 @@ public class Message implements Serializable {
 		this.id = id;
 		this.success = success;
 		this.perform = Process.LOGIN;
+		this.why = "";
 	}
 	
 	//for server use, fail
-	public Message(Message m) {
+	public Message(Message m, String why) {
 		this.sessionID = m.sessionID;
 		this.id = m.sessionID;
 		this.perform = m.perform;
 		this.success = false;
+		this.why = why;
 	}
 	
 	//for server use, simple success
@@ -45,6 +50,7 @@ public class Message implements Serializable {
 		this.id = m.id;
 		this.perform = m.perform;
 		this.success = success;
+		this.why = "";
 	}
 	
 }

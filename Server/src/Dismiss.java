@@ -15,15 +15,16 @@
 	 * +Message(Message, why)			//server: fail
 	 */
 
-public class Logout extends Message {
+
+public class Dismiss extends Message {
 	
-	//client use
-	public Logout(int sessionID) {
-		super(sessionID, Process.LOGOUT);
+	//Teller
+	public Dismiss(int sessionID) {
+		super(sessionID, Process.DISMISS);
 	}
 	
-	//server use
-	public Logout(Message m) {
+	//Server
+	public Dismiss(Message m) {
 		super(m, true);
 	}
 }

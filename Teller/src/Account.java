@@ -5,15 +5,15 @@ public class Account {
 	
 	private final int id;
 	private final AccountType type;
-	private boolean positiveStatus = false;
+
 	private Money balance = new Money();
+	private boolean positiveStatus = false;
 	private LastTransaction lastTransaction;
 	private Date opened = new Date();
 	private Date closed;
 	private boolean attachedCard = false;  //is there an ATM assoc w this account
 	private int cardID;						//if so what is the card id
-	
-	//TODO: When classes become available
+
 	private ArrayList<Fee> fees = new ArrayList<>();	
 	
 	public Account(int id, AccountType at) {
@@ -24,13 +24,11 @@ public class Account {
 	//full constructor for loading from file; collections can be set separately 
 	public Account(
 			int id, AccountType accountType,
-			boolean positiveStatus, Money balance,
-			LastTransaction lastTransaction, Date opened,
-			Date closed, boolean attCard,
-			int cardID) {
+			Money balance, LastTransaction lastTransaction,
+			Date opened, Date closed,
+			boolean attCard, int cardID) {
 		
 		this(id, accountType);
-		this.positiveStatus = positiveStatus;
 		this.balance = balance;
 		this.lastTransaction = lastTransaction;
 		this.opened = opened;
@@ -39,8 +37,7 @@ public class Account {
 		this.cardID = cardID;
 	}
 
-	public boolean isPositiveStatus() { return this.positiveStatus; }
-	public void setPositiveStatus(boolean ps) { this.positiveStatus = ps; }
+	public boolean isPositiveStatus() { return this.balance.isGreater(new Money()); }
 	
 	public LastTransaction getLastTransaction() { return this.lastTransaction; }
 	public void setLastTransaction(LastTransaction lt) { this.lastTransaction = lt; }

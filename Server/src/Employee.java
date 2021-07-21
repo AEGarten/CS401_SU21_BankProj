@@ -6,20 +6,19 @@ public class Employee {
 	private int employeeID;
 	private String loginusername;
 	private String loginpwd;
-	private EmployeeType type;
+	private EmployeeType type = EmployeeType.EMPLOYEE;
 	
-	
-	public Employee() {
-		this.name = "";
-		this.employeeID = 0;
-		this.setLoginusername("");
-		this.loginpwd = "";
-        this.type = EmployeeType.EMPLOYEE;
-	}
-	
+	//Server
 	public Employee(String name, int employeeID, String loginusername, String loginpwd) {
 		this.name = name;
 		this.employeeID = employeeID;
+		this.loginusername = loginusername;
+		this.loginpwd = loginpwd;
+	}
+	
+	//Supervisor
+	public Employee(String name, String loginusername, String loginpwd) {
+		this.name = name;
 		this.loginusername = loginusername;
 		this.loginpwd = loginpwd;
 	}

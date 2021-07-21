@@ -15,15 +15,28 @@
 	 * +Message(Message, why)			//server: fail
 	 */
 
-public class Logout extends Message {
+public class ATMWithdrawal extends Message {
+	public Money amount;
+	public int accountID;
+	boolean accountPositive;
 	
-	//client use
-	public Logout(int sessionID) {
-		super(sessionID, Process.LOGOUT);
+	//ATM use
+	public ATMWithdrawal(int sessionID, Money amount, int accountID) {
+		super(sessionID, Process.WITHDRAWAL);
+			this.amount = amount;
+			this.accountID = accountID;
 	}
 	
-	//server use
-	public Logout(Message m) {
+	//Server, success
+	public ATMWithdrawal(Message m, boolean positive) {
 		super(m, true);
+		this.accountPositive = positive;
 	}
+	
+	//Server, fail
+	public ATMWithdrawal(Message m, String why) {
+		super(m, why);
+	}
+	
+	
 }
